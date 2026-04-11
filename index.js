@@ -1,4 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Currency configuration based on country code
+    const currencyConfig = {
+        'MM': { symbol: 'Ks', code: 'MMK', name: 'Kyats', locale: 'en-MM' },
+        'TH': { symbol: '฿', code: 'THB', name: 'Baht', locale: 'th-TH' },
+        'US': { symbol: '$', code: 'USD', name: 'Dollar', locale: 'en-US' },
+        'GB': { symbol: '£', code: 'GBP', name: 'Pound', locale: 'en-GB' },
+        'EU': { symbol: '€', code: 'EUR', name: 'Euro', locale: 'de-DE' },
+        'JP': { symbol: '¥', code: 'JPY', name: 'Yen', locale: 'ja-JP' },
+        'CN': { symbol: '¥', code: 'CNY', name: 'Yuan', locale: 'zh-CN' },
+        'IN': { symbol: '₹', code: 'INR', name: 'Rupee', locale: 'en-IN' },
+        'SG': { symbol: 'S$', code: 'SGD', name: 'Dollar', locale: 'en-SG' },
+        'MY': { symbol: 'RM', code: 'MYR', name: 'Ringgit', locale: 'en-MY' },
+        'ID': { symbol: 'Rp', code: 'IDR', name: 'Rupiah', locale: 'id-ID' },
+        'PH': { symbol: '₱', code: 'PHP', name: 'Peso', locale: 'en-PH' },
+        'VN': { symbol: '₫', code: 'VND', name: 'Dong', locale: 'vi-VN' },
+        'KR': { symbol: '₩', code: 'KRW', name: 'Won', locale: 'ko-KR' },
+        'AU': { symbol: 'A$', code: 'AUD', name: 'Dollar', locale: 'en-AU' },
+        'CA': { symbol: 'C$', code: 'CAD', name: 'Dollar', locale: 'en-CA' },
+        'CH': { symbol: 'Fr', code: 'CHF', name: 'Franc', locale: 'de-CH' },
+        'NZ': { symbol: 'NZ$', code: 'NZD', name: 'Dollar', locale: 'en-NZ' },
+        'ZA': { symbol: 'R', code: 'ZAR', name: 'Rand', locale: 'en-ZA' },
+        'BR': { symbol: 'R$', code: 'BRL', name: 'Real', locale: 'pt-BR' },
+        'MX': { symbol: '$', code: 'MXN', name: 'Peso', locale: 'es-MX' },
+        'RU': { symbol: '₽', code: 'RUB', name: 'Ruble', locale: 'ru-RU' },
+        'AE': { symbol: 'د.إ', code: 'AED', name: 'Dirham', locale: 'ar-AE' },
+        'SA': { symbol: '﷼', code: 'SAR', name: 'Riyal', locale: 'ar-SA' }
+    };
+
+    // Default currency (USD)
+    let currentCurrency = currencyConfig['US'];
+
+    // Load saved currency from localStorage on init
+    const savedCurrency = JSON.parse(localStorage.getItem('currency'));
+    if (savedCurrency) {
+        currentCurrency = savedCurrency;
+    }
+
     // Initialize title bar
     updateTitleBar();
     setInterval(updateTitleBar, 1000);
@@ -36,6 +73,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Format currency based on current location
+    function formatCurrency(amount) {
+        const amountStr = parseFloat(amount).toFixed(2);
+        // For Myanmar Kyats, use "Ks" prefix
+        if (currentCurrency.code === 'MMK') {
+            return 'Ks ' + amountStr;
+        }
+        // For other currencies, use symbol directly
+        return currentCurrency.symbol + amountStr;
+    }
+
+    // Get country code from coordinates using reverse geocoding
+    function getCountryFromCoords(lat, lon, callback) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                const countryCode = data.address?.country_code?.toUpperCase();
+                callback(countryCode);
+            })
+            .catch(error => {
+                console.error('Error getting country:', error);
+                callback(null);
+            });
+    }
+
+    // Update currency based on country code
+    function updateCurrency(countryCode) {
+        if (countryCode && currencyConfig[countryCode]) {
+            currentCurrency = currencyConfig[countryCode];
+            localStorage.setItem('currency', JSON.stringify(currentCurrency));
+        }
+        // Refresh UI with new currency
+        renderWallets();
+        renderTransactions();
+        renderIncomeExpenseSummary();
+    }
+
+    // Render all currency displays with current currency
+    function updateAllCurrencyDisplays() {
+        renderWallets();
+        renderTransactions();
+        renderIncomeExpenseSummary();
+    }
+
     function updateTitleBar() {
         const now = new Date();
 
@@ -61,13 +142,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     const lat = position.coords.latitude.toFixed(2);
                     const lon = position.coords.longitude.toFixed(2);
                     locationEl.textContent = `${lat}°N, ${lon}°E`;
+
+                    // Get country and update currency
+                    getCountryFromCoords(lat, lon, function(countryCode) {
+                        if (countryCode) {
+                            updateCurrency(countryCode);
+                            locationEl.textContent += ` (${countryCode})`;
+                        }
+                    });
                 },
                 function(error) {
                     locationEl.textContent = 'Location unavailable';
+                    // Currency already loaded from localStorage on init
                 }
             );
         } else {
             locationEl.textContent = 'Geolocation not supported';
+            // Currency already loaded from localStorage on init
         }
     }
 
@@ -140,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <img src="${wallet.icon}" alt="${wallet.name}">
                 <div class="wallet-item-info">
                     <div class="wallet-item-name">${wallet.name}</div>
-                    <div class="wallet-item-amount">$${parseFloat(wallet.amount).toFixed(2)}</div>
+                    <div class="wallet-item-amount">${formatCurrency(wallet.amount)}</div>
                 </div>
             `;
             walletsList.appendChild(walletItem);
@@ -641,7 +732,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td><span class="transaction-type ${typeClass}">${typeLabel}</span></td>
                 <td>${transaction.walletName}</td>
                 <td>${transaction.description || '-'}</td>
-                <td><span class="transaction-amount ${amountClass}">${amountPrefix}$${parseFloat(transaction.amount).toFixed(2)}</span></td>
+                <td><span class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(transaction.amount)}</span></td>
             `;
             tbody.appendChild(row);
         });
@@ -678,7 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
         wallets.forEach(function(wallet) {
             const option = document.createElement('option');
             option.value = wallet.name;
-            option.textContent = `${wallet.name} ($${parseFloat(wallet.amount).toFixed(2)})`;
+            option.textContent = `${wallet.name} - ${formatCurrency(wallet.amount)}`;
             incomeExpenseWallet.appendChild(option);
         });
     }
@@ -818,8 +909,8 @@ document.addEventListener('DOMContentLoaded', function() {
             wallets[walletIndex].amount = (currentAmount + transactionAmount).toFixed(2);
         } else {
             if (currentAmount < transactionAmount) {
-                const remainingBalance = (currentAmount - transactionAmount).toFixed(2);
-                alert(`Insufficient funds! Your current balance is $${currentAmount.toFixed(2)}, but you're trying to spend $${transactionAmount.toFixed(2)}. Required additional amount: $${Math.abs(remainingBalance).toFixed(2)}`);
+                const remainingBalance = currentAmount - transactionAmount;
+                alert(`Insufficient funds! Your current balance is ${formatCurrency(currentAmount)}, but you're trying to spend ${formatCurrency(transactionAmount)}. Required additional amount: ${formatCurrency(Math.abs(remainingBalance))}`);
                 return;
             }
             wallets[walletIndex].amount = (currentAmount - transactionAmount).toFixed(2);
@@ -901,7 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 { header: 'Type', key: 'type', width: 12 },
                 { header: 'Wallet', key: 'walletName', width: 20 },
                 { header: 'Description', key: 'description', width: 30 },
-                { header: 'Amount ($)', key: 'amount', width: 15 }
+                { header: `Amount (${currentCurrency.code})`, key: 'amount', width: 15 }
             ];
 
             // Style header row
@@ -1006,13 +1097,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Update summary cards
-        document.getElementById('balance').textContent = `$${balance.toFixed(2)}`;
-        document.getElementById('totalExpense').textContent = `$${totalExpense.toFixed(2)}`;
+        document.getElementById('balance').textContent = formatCurrency(balance);
+        document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
 
         // Calculate average monthly expense
         const uniqueMonths = Object.keys(monthlyData);
         const avgMonthlyExpense = uniqueMonths.length > 0 ? totalExpense / uniqueMonths.length : 0;
-        document.getElementById('avgMonthlyExpense').textContent = `$${avgMonthlyExpense.toFixed(2)}`;
+        document.getElementById('avgMonthlyExpense').textContent = formatCurrency(avgMonthlyExpense);
 
         // Calculate average remaining usage per day for the rest of the month
         const now = new Date();
@@ -1021,7 +1112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const remainingDays = daysInMonth - currentDay + 1; // From current day to end of month (inclusive)
         // Average remaining usage per day = balance / remaining days
         const avgRemainingPerDay = remainingDays > 0 ? balance / remainingDays : balance;
-        document.getElementById('avgRemainingThisMonth').textContent = `$${avgRemainingPerDay.toFixed(2)}`;
+        document.getElementById('avgRemainingThisMonth').textContent = formatCurrency(avgRemainingPerDay);
 
         // Render charts
         renderCategoryChart(expensesByCategory);
