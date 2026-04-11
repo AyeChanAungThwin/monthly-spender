@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Spender</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="index.js"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Monthly Spender</h1>
+            </div>
+            <ul class="menu">
+                <li class="menu-item active" data-menu="income-expense">
+                    <img src="images/spending.png" alt="Income/Expense icon">
+                    <span>Income/Expense</span>
+                </li>
+                <li class="menu-item" data-menu="transaction">
+                    <img src="images/transaction.png" alt="Transaction icon">
+                    <span>Transaction</span>
+                </li>
+                <li class="menu-item" data-menu="categories">
+                    <img src="images/categories.png" alt="Categories icon">
+                    <span>Categories</span>
+                </li>
+                <li class="menu-item" data-menu="wallets">
+                    <img src="images/wallet.png" alt="Wallets icon">
+                    <span>Wallets</span>
+                </li>
+                <!-- <li class="menu-item" data-menu="settings">
+                    <img src="images/settings.png" alt="Settings icon">
+                    <span>Settings</span>
+                </li> -->
+            </ul>
+        </nav>
+        <main class="content">
+            <header class="title-bar">
+                <div class="title-bar-left">
+                    <div class="date-info">
+                        <span id="currentDate"></span>
+                    </div>
+                    <div class="time-info">
+                        <span id="currentTime"></span>
+                        <span id="timezone"></span>
+                    </div>
+                    <div class="location-info">
+                        <span id="location"></span>
+                    </div>
+                </div>
+                <div class="title-bar-right">
+                    <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
+                        <img src="images/light.png" alt="Light mode" class="light-icon">
+                        <img src="images/dark.png" alt="Dark mode" class="dark-icon">
+                    </button>
+                </div>
+            </header>
+            <section id="income-expense" class="content-section active">
+                <h2>Income/Expense</h2>
+                <div class="income-expense-buttons">
+                    <button class="income-btn" id="incomeBtn">
+                        <img src="images/income.png" alt="Income">
+                        <span>Income</span>
+                    </button>
+                    <button class="expense-btn" id="expenseBtn">
+                        <img src="images/expense.png" alt="Expense">
+                        <span>Expense</span>
+                    </button>
+                </div>
+
+                <!-- Summary Section -->
+                <div class="summary-section" id="summarySection">
+                    <!-- Summary Cards -->
+                    <div class="summary-cards">
+                        <div class="summary-card balance-card">
+                            <div class="card-icon">
+                                <img src="images/balance.png" alt="Balance">
+                            </div>
+                            <div class="card-info">
+                                <div class="card-label">Balance</div>
+                                <div class="card-amount" id="balance">$0.00</div>
+                            </div>
+                        </div>
+                        <div class="summary-card expense-card">
+                            <div class="card-icon">
+                                <img src="images/expense.png" alt="Expense">
+                            </div>
+                            <div class="card-info">
+                                <div class="card-label">Total Expense</div>
+                                <div class="card-amount" id="totalExpense">$0.00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Stats -->
+                    <div class="monthly-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Average Monthly Expense</div>
+                            <div class="stat-value" id="avgMonthlyExpense">$0.00</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Average Remaining Usage/Day</div>
+                            <div class="stat-value" id="avgRemainingThisMonth">$0.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Section -->
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <h3>Expenses by Category</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="transaction" class="content-section">
+                <h2>Transactions</h2>
+                <div class="transactions-content">
+                    <div class="transactions-header">
+                        <button class="clear-btn" id="clearTransactionsBtn">
+                            <img src="images/clear.png" alt="Clear">
+                            <span>Clear All</span>
+                        </button>
+                        <button class="download-btn" id="downloadExcelBtn">
+                            <img src="images/excel.png" alt="Download">
+                            <span>Download Excel</span>
+                        </button>
+                    </div>
+                    <div class="transactions-table-container">
+                        <table class="transactions-table" id="transactionsTable">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Wallet</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #888; padding: 40px;">No transactions yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+            <section id="categories" class="content-section">
+                <h2>Categories</h2>
+                <div class="categories-content">
+                    <button class="add-category-btn" id="addCategoryBtn">
+                        <span class="plus-icon">+</span>
+                        <span class="btn-text">Add New Category</span>
+                    </button>
+                    <div class="categories-list" id="categoriesList"></div>
+                </div>
+            </section>
+            <section id="wallets" class="content-section">
+                <h2>Wallets</h2>
+                <div class="wallets-content">
+                    <button class="add-wallet-btn" id="addWalletBtn">
+                        <span class="plus-icon">+</span>
+                        <span class="btn-text">Add New Wallet</span>
+                    </button>
+                    <div class="wallets-list" id="walletsList"></div>
+                </div>
+            </section>
+
+            <!-- Add Category Modal -->
+            <div class="modal-overlay" id="categoryModal">
+                <div class="modal-content">
+                    <button class="modal-close" id="categoryModalClose">&times;</button>
+                    <h3>Add New Category</h3>
+                    <form id="addCategoryForm">
+                        <div class="form-group">
+                            <label for="categoryName">Name</label>
+                            <input type="text" id="categoryName" placeholder="Enter category name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Icon</label>
+                            <div class="icon-selection" id="categoryIconSelection">
+                                <!-- Icons will be loaded dynamically from images/categories/ -->
+                            </div>
+                            <input type="hidden" id="selectedCategoryIcon" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" id="categoryBtnCancel">Cancel</button>
+                            <button type="submit" class="btn-submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Add Wallet Modal -->
+            <div class="modal-overlay" id="walletModal">
+                <div class="modal-content">
+                    <button class="modal-close" id="modalClose">&times;</button>
+                    <h3>Add New Wallet</h3>
+                    <form id="addWalletForm">
+                        <div class="form-group">
+                            <label for="walletName">Name</label>
+                            <input type="text" id="walletName" placeholder="Enter wallet name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Icon</label>
+                            <div class="icon-selection" id="iconSelection">
+                                <!-- Icons will be loaded dynamically from images/wallets/ -->
+                            </div>
+                            <input type="hidden" id="selectedIcon" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="walletAmount">Amount</label>
+                            <input type="number" id="walletAmount" placeholder="0.00" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" id="btnCancel">Cancel</button>
+                            <button type="submit" class="btn-submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Income/Expense Modal -->
+            <div class="modal-overlay" id="incomeExpenseModal">
+                <div class="modal-content">
+                    <button class="modal-close" id="incomeExpenseModalClose">&times;</button>
+                    <h3 id="incomeExpenseModalTitle">Add Income</h3>
+                    <form id="incomeExpenseForm">
+                        <div class="form-group">
+                            <label for="incomeExpenseWallet">Select Wallet</label>
+                            <select id="incomeExpenseWallet" required>
+                                <option value="">Choose a wallet...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="incomeExpenseAmount">Amount</label>
+                            <input type="number" id="incomeExpenseAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Additional Info (optional)</label>
+                            <div class="radio-group">
+                                <label class="radio-label">
+                                    <input type="radio" name="infoType" value="category" checked>
+                                    <span>Category</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="infoType" value="description">
+                                    <span>Description</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="categorySelectorGroup">
+                            <label for="incomeExpenseCategory">Select Category</label>
+                            <div class="icon-selection" id="incomeExpenseCategorySelection">
+                                <!-- Icons will be loaded dynamically from images/categories/ -->
+                            </div>
+                            <input type="hidden" id="incomeExpenseCategory">
+                        </div>
+                        <div class="form-group" id="descriptionGroup" style="display: none;">
+                            <label for="incomeExpenseDescription">Description</label>
+                            <input type="text" id="incomeExpenseDescription" placeholder="Enter description">
+                        </div>
+                        <input type="hidden" id="incomeExpenseType">
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" id="incomeExpenseBtnCancel">Cancel</button>
+                            <button type="submit" class="btn-submit">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <section id="settings" class="content-section">
+                <h2>Settings</h2>
+                <div class="settings-content">
+                    <button class="google-signin-btn" id="googleSigninBtn">
+                        <img src="images/login.png" alt="Login">
+                        <span class="hint-text">Sign in to Google account to save your data</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
