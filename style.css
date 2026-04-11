@@ -1258,6 +1258,51 @@ body.dark-mode .download-btn img {
     border-bottom: none;
 }
 
+/* Empty State Styles */
+.transactions-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.transactions-empty-state .empty-state-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    opacity: 0.5;
+}
+
+.transactions-empty-state p {
+    font-size: 1.1rem;
+    color: #888;
+    margin: 0;
+    font-weight: 500;
+}
+
+.transactions-empty-state .empty-state-hint {
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+    max-width: 300px;
+    line-height: 1.4;
+}
+
+body.dark-mode .transactions-empty-state p {
+    color: #aaa;
+}
+
+body.dark-mode .transactions-empty-state .empty-state-hint {
+    color: #888;
+}
+
+body.dark-mode .transactions-empty-state .empty-state-icon {
+    filter: brightness(0) invert(1) opacity(0.3);
+}
+
 .transaction-type {
     padding: 4px 12px;
     border-radius: 20px;
@@ -1834,6 +1879,25 @@ body.dark-mode .chart-card h3 {
         font-size: 0.85rem;
     }
 
+    /* Empty state responsive */
+    .transactions-empty-state {
+        padding: 40px 20px;
+    }
+
+    .transactions-empty-state .empty-state-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .transactions-empty-state p {
+        font-size: 1rem;
+    }
+
+    .transactions-empty-state .empty-state-hint {
+        font-size: 0.85rem;
+        max-width: 250px;
+    }
+
     /* Modal responsive */
     .modal-content {
         width: 95%;
@@ -1988,6 +2052,25 @@ body.dark-mode .chart-card h3 {
 
     .wallet-item-amount {
         font-size: 0.95rem;
+    }
+
+    /* Empty state for small screens */
+    .transactions-empty-state {
+        padding: 30px 15px;
+    }
+
+    .transactions-empty-state .empty-state-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .transactions-empty-state p {
+        font-size: 0.95rem;
+    }
+
+    .transactions-empty-state .empty-state-hint {
+        font-size: 0.8rem;
+        max-width: 200px;
     }
 
     /* Edit/Delete buttons - make easier to tap */

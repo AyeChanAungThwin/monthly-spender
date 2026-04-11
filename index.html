@@ -132,7 +132,16 @@
                             <span>Download Excel</span>
                         </button>
                     </div>
-                    <div class="transactions-table-container">
+
+                    <!-- Empty State (shown when no transactions) -->
+                    <div class="transactions-empty-state" id="transactionsEmptyState">
+                        <img src="images/transaction.png" alt="No transactions" class="empty-state-icon">
+                        <p>No transactions yet.</p>
+                        <span class="empty-state-hint">Start by adding income or expense from the Income/Expense page.</span>
+                    </div>
+
+                    <!-- Transactions Table (hidden when no transactions) -->
+                    <div class="transactions-table-container" id="transactionsTableContainer" style="display: none;">
                         <table class="transactions-table" id="transactionsTable">
                             <thead>
                                 <tr>
@@ -144,9 +153,6 @@
                                 </tr>
                             </thead>
                             <tbody id="transactionsTableBody">
-                                <tr>
-                                    <td colspan="5" style="text-align: center; color: #888; padding: 40px;">No transactions yet.</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>

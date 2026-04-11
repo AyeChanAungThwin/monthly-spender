@@ -603,17 +603,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Render transactions
     function renderTransactions() {
         const tbody = document.getElementById('transactionsTableBody');
+        const emptyState = document.getElementById('transactionsEmptyState');
+        const tableContainer = document.getElementById('transactionsTableContainer');
         const downloadBtn = document.getElementById('downloadExcelBtn');
         const clearBtn = document.getElementById('clearTransactionsBtn');
-        if (!tbody) return;
 
         // Show/hide download and clear buttons based on transaction data
         if (transactions.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888; padding: 40px;">No transactions yet.</td></tr>';
+            // Show empty state, hide table
+            if (emptyState) emptyState.style.display = 'flex';
+            if (tableContainer) tableContainer.style.display = 'none';
             if (downloadBtn) downloadBtn.style.display = 'none';
             if (clearBtn) clearBtn.style.display = 'none';
             return;
         }
+
+        // Hide empty state, show table
+        if (emptyState) emptyState.style.display = 'none';
+        if (tableContainer) tableContainer.style.display = 'block';
 
         // Show buttons when there are transactions
         if (downloadBtn) downloadBtn.style.display = 'flex';
