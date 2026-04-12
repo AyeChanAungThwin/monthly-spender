@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('walletName').value = wallet.name;
         document.getElementById('walletAmount').value = wallet.amount;
-        document.querySelector('.modal-content h3').textContent = 'Edit Wallet';
+        document.querySelector('#walletModal .modal-content h3').textContent = 'Edit Wallet';
 
         loadWalletIcons(wallet.icon);
         walletModal.classList.add('active');
