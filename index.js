@@ -270,14 +270,24 @@ document.addEventListener('DOMContentLoaded', function() {
             walletsList.innerHTML = '<p style="color: #888; text-align: center; grid-column: 1/-1;">No wallets added yet. Click the + button to add one.</p>';
             return;
         }
+
+        // Get transactions to check which wallets are in use
+        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+
         wallets.forEach(function(wallet, index) {
+            const usedInTransactions = transactions.some(t => t.walletName === wallet.name);
             const walletItem = document.createElement('div');
             walletItem.className = 'wallet-item';
+
+            if (usedInTransactions) {
+                walletItem.classList.add('wallet-item-used');
+            }
+
             walletItem.innerHTML = `
-                <button class="wallet-edit-btn" data-index="${index}">
+                <button class="wallet-edit-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
                     <img src="images/edit.png" alt="Edit">
                 </button>
-                <button class="wallet-delete-btn" data-index="${index}">
+                <button class="wallet-delete-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
                     <img src="images/trash.png" alt="Delete">
                 </button>
                 <img src="${wallet.icon}" alt="${wallet.name}">
@@ -300,7 +310,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const usedInTransactions = transactions.some(t => t.walletName === walletName);
 
                 if (usedInTransactions) {
-                    alert(`Cannot delete wallet "${walletName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
                     return;
                 }
 
@@ -319,6 +328,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.wallet-edit-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
+                const walletName = wallets[index].name;
+
+                // Check if wallet is used in any transaction
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const usedInTransactions = transactions.some(t => t.walletName === walletName);
+
+                if (usedInTransactions) {
+                    alert(`Cannot edit wallet "${walletName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
+                    return;
+                }
+
                 openEditModal(index);
             });
         });
@@ -571,14 +591,24 @@ document.addEventListener('DOMContentLoaded', function() {
             categoriesList.innerHTML = '<p style="color: #888; text-align: center; grid-column: 1/-1;">No categories added yet. Click the + button to add one.</p>';
             return;
         }
+
+        // Get transactions to check which categories are in use
+        const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+
         categories.forEach(function(category, index) {
+            const usedInTransactions = transactions.some(t => t.description === category.name);
             const categoryItem = document.createElement('div');
             categoryItem.className = 'category-item';
+
+            if (usedInTransactions) {
+                categoryItem.classList.add('category-item-used');
+            }
+
             categoryItem.innerHTML = `
-                <button class="category-edit-btn" data-index="${index}">
+                <button class="category-edit-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
                     <img src="images/edit.png" alt="Edit">
                 </button>
-                <button class="category-delete-btn" data-index="${index}">
+                <button class="category-delete-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
                     <img src="images/trash.png" alt="Delete">
                 </button>
                 <img src="${category.icon}" alt="${category.name}">
@@ -600,7 +630,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const usedInTransactions = transactions.some(t => t.description === categoryName);
 
                 if (usedInTransactions) {
-                    alert(`Cannot delete category "${categoryName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
                     return;
                 }
 
@@ -619,6 +648,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.category-edit-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
+                const categoryName = categories[index].name;
+
+                // Check if category is used in any transaction
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const usedInTransactions = transactions.some(t => t.description === categoryName);
+
+                if (usedInTransactions) {
+                    alert(`Cannot edit category "${categoryName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
+                    return;
+                }
+
                 openCategoryEditModal(index);
             });
         });

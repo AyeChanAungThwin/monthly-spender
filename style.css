@@ -197,9 +197,16 @@ body.dark-mode .theme-toggle .dark-icon {
 .content-section h2 {
     font-size: 1.8rem;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
     padding-bottom: 15px;
     border-bottom: 2px solid #eee;
+}
+
+.section-hint {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 20px;
+    margin-top: -10px;
 }
 
 .content-placeholder {
@@ -387,6 +394,10 @@ body.dark-mode .content-section h2 {
     border-bottom-color: #3a3a3a;
 }
 
+body.dark-mode .section-hint {
+    color: #888;
+}
+
 body.dark-mode .content-placeholder {
     background-color: #2a2a2a;
     border-color: #3a3a3a;
@@ -473,6 +484,27 @@ body.dark-mode .google-signin-btn img {
 
 .wallet-item:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Wallet item that is used in transactions - edit button disabled */
+.wallet-item-used {
+    border-color: #e0e0e0;
+    opacity: 0.5;
+}
+
+.wallet-item-used:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.wallet-item-used .wallet-edit-btn,
+.wallet-item-used .wallet-delete-btn {
+    cursor: not-allowed;
+}
+
+.wallet-item-used .wallet-edit-btn img,
+.wallet-item-used .wallet-delete-btn img,
+.wallet-item-used > img {
+    filter: grayscale(100%);
 }
 
 .wallet-edit-btn,
@@ -799,6 +831,10 @@ body.dark-mode .wallet-item {
     border-color: #3a3a3a;
 }
 
+body.dark-mode .wallet-item-used {
+    border-color: #3a3a3a;
+}
+
 body.dark-mode .wallet-item-name {
     color: #e0e0e0;
 }
@@ -1007,6 +1043,27 @@ body.dark-mode .wallet-delete-btn:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Category item that is used in transactions - edit button disabled */
+.category-item-used {
+    border-color: #e0e0e0;
+    opacity: 0.5;
+}
+
+.category-item-used:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.category-item-used .category-edit-btn,
+.category-item-used .category-delete-btn {
+    cursor: not-allowed;
+}
+
+.category-item-used .category-edit-btn img,
+.category-item-used .category-delete-btn img,
+.category-item-used > img {
+    filter: grayscale(100%);
+}
+
 .category-edit-btn,
 .category-delete-btn {
     position: absolute;
@@ -1097,6 +1154,10 @@ body.dark-mode .add-category-btn .btn-text {
 
 body.dark-mode .category-item {
     background-color: #2a2a2a;
+    border-color: #3a3a3a;
+}
+
+body.dark-mode .category-item-used {
     border-color: #3a3a3a;
 }
 
