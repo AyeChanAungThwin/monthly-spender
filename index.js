@@ -1006,7 +1006,47 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadIncomeExpenseCategoryIcons(selectedIconPath = null) {
         incomeExpenseCategorySelection.innerHTML = '';
 
-        // Load categories from localStorage
+        const type = incomeExpenseType.value;
+
+        // For income, use fixed 4 income categories
+        if (type === 'income') {
+            document.querySelector('.radio-group').style.display = 'flex';
+            categorySelectorGroup.style.display = 'block';
+            descriptionGroup.style.display = 'none';
+
+            const incomeCategories = [
+                { name: 'Business Owner', icon: 'images/income/business-owner.png' },
+                { name: 'Investment', icon: 'images/income/investment.png' },
+                { name: 'Salary', icon: 'images/income/salary.png' },
+                { name: 'Self-Employment', icon: 'images/income/self-employment.png' }
+            ];
+
+            incomeCategories.forEach(function(category) {
+                const iconOption = document.createElement('div');
+                iconOption.className = 'icon-option';
+                iconOption.setAttribute('data-icon', category.icon);
+                iconOption.setAttribute('data-name', category.name);
+                iconOption.setAttribute('title', category.name);
+                iconOption.innerHTML = `<img src="${category.icon}" alt="${category.name}">`;
+
+                if (selectedIconPath && category.icon === selectedIconPath) {
+                    iconOption.classList.add('selected');
+                    incomeExpenseCategory.value = category.icon;
+                    incomeExpenseCategory.setAttribute('data-name', category.name);
+                }
+
+                iconOption.addEventListener('click', function() {
+                    document.querySelectorAll('#incomeExpenseCategorySelection .icon-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    incomeExpenseCategory.value = category.icon;
+                    incomeExpenseCategory.setAttribute('data-name', category.name);
+                });
+                incomeExpenseCategorySelection.appendChild(iconOption);
+            });
+            return;
+        }
+
+        // For expense, use categories from localStorage
         const userCategories = JSON.parse(localStorage.getItem('categories') || '[]');
 
         if (userCategories.length === 0) {
@@ -1075,7 +1115,7 @@ document.addEventListener('DOMContentLoaded', function() {
         incomeExpenseCategory.removeAttribute('data-name');
         document.querySelectorAll('#incomeExpenseCategorySelection .icon-option').forEach(opt => opt.classList.remove('selected'));
 
-        // Check if categories exist
+        // Reset to default state for expense (income will override when opened)
         const userCategories = JSON.parse(localStorage.getItem('categories') || '[]');
         if (userCategories.length === 0) {
             document.querySelector('.radio-group').style.display = 'none';
