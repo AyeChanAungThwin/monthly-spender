@@ -6,6 +6,7 @@ A static web application for tracking monthly expenses and budgeting.
 
 - **Income/Expense Tracking** - Record income and expenses with wallet selection
 - **Transaction History** - View all transactions with date, type, wallet, and description
+- **Delete Transactions** - Remove individual transactions with optional wallet balance adjustment (reverses the transaction effect)
 - **Categories Management** - Create custom expense categories with icons
 - **Wallets Management** - Manage multiple wallets (e.g., Bank, Cash, Digital Wallet)
 - **Dark/Light Mode** - Toggle between themes with preference saved to localStorage
@@ -14,6 +15,7 @@ A static web application for tracking monthly expenses and budgeting.
 - **Visual Analytics** - Doughnut chart showing expenses by category
 - **Monthly Statistics** - Average monthly expense and daily remaining budget
 - **Responsive Design** - Works on desktop, tablet, and mobile devices
+- **Location-Based Currency** - Auto-detects country and sets appropriate currency symbol
 
 ## Tech Stack
 
@@ -97,12 +99,16 @@ Then open `http://localhost:8000` in your browser.
 
 *Note: Expenses cannot exceed the wallet balance.*
 
-### 5. View Transaction History
+### 5. View and Manage Transactions
 
 1. Navigate to **Transaction** in the sidebar
 2. View all recorded transactions in a table
-3. Click **Download Excel** to export data
-4. Click **Clear All** to delete all transactions
+3. Click the **trash icon** on any transaction to delete it
+4. When deleting, optionally check **Update wallet balance** to reverse the transaction:
+   - Deleting an expense adds the amount back to the wallet
+   - Deleting an income subtracts the amount from the wallet
+5. Click **Download Excel** to export data
+6. Click **Clear All** to delete all transactions
 
 ### 6. View Analytics
 
