@@ -376,45 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
         walletModal.classList.add('active');
     }
 
-    function loadWalletIcons(selectedIconPath = null) {
-        // Clear existing icons
-        iconSelection.innerHTML = '';
-
-        // Available wallet icons with display names
-        const iconFiles = [
-            { file: 'banking.png', name: 'Banking' },
-            { file: 'wallet.png', name: 'Digital Cash' },
-            { file: 'money.png', name: 'Cash' }
-        ];
-
-        if (iconFiles.length === 0) {
-            iconSelection.innerHTML = '<p style="color: #888; grid-column: 1/-1; text-align: center;">No icons found in images/wallets/</p>';
-            return;
-        }
-
-        iconFiles.forEach(function(icon) {
-            const iconPath = 'images/wallets/' + icon.file;
-            const iconOption = document.createElement('div');
-            iconOption.className = 'icon-option';
-            iconOption.setAttribute('data-icon', iconPath);
-            iconOption.setAttribute('title', icon.name);
-            iconOption.innerHTML = `<img src="${iconPath}" alt="${icon.name}">`;
-
-            // Select the current icon if editing
-            if (selectedIconPath && iconPath === selectedIconPath) {
-                iconOption.classList.add('selected');
-                selectedIconInput.value = iconPath;
-            }
-
-            iconOption.addEventListener('click', function() {
-                document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedIconInput.value = iconPath;
-            });
-            iconSelection.appendChild(iconOption);
-        });
-    }
-
     // Load icons from wallets/ folder
     function loadWalletIcons(selectedIconPath = null) {
         // Clear existing icons
@@ -458,6 +419,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Open modal
     addWalletBtn.addEventListener('click', function() {
+        // Reset form state before opening
+        addWalletForm.reset();
+        selectedIconInput.value = '';
+        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelector('#walletModal .modal-content h3').textContent = 'Add New Wallet';
+        document.getElementById('walletName').disabled = false;
+        document.getElementById('walletName').style.cursor = 'text';
+        document.getElementById('walletName').style.backgroundColor = '';
+        const iconOptions = iconSelection.querySelectorAll('.icon-option');
+        iconOptions.forEach(opt => {
+            opt.style.pointerEvents = 'auto';
+            opt.style.opacity = '1';
+        });
+        editingIndex = null;
         walletModal.classList.add('active');
         loadWalletIcons();
     });
@@ -762,6 +737,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Open category modal
     addCategoryBtn.addEventListener('click', function() {
+        // Reset form state before opening
+        addCategoryForm.reset();
+        selectedCategoryIconInput.value = '';
+        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelector('#categoryModal .modal-content h3').textContent = 'Add New Category';
+        categoryEditingIndex = null;
         categoryModal.classList.add('active');
         loadCategoryIcons();
     });
