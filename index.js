@@ -923,6 +923,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loadWalletsToDropdown();
         loadIncomeExpenseCategoryIcons();
         incomeExpenseModal.classList.add('active');
+        // Refresh summary when income button is clicked
+        renderIncomeExpenseSummary();
     });
 
     // Open expense modal
@@ -932,6 +934,8 @@ document.addEventListener('DOMContentLoaded', function() {
         loadWalletsToDropdown();
         loadIncomeExpenseCategoryIcons();
         incomeExpenseModal.classList.add('active');
+        // Refresh summary when expense button is clicked
+        renderIncomeExpenseSummary();
     });
 
     // Load wallets into dropdown
@@ -1529,7 +1533,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Calculate total income (balance + total expense)
+        const totalIncome = preciseAdd(balance, totalExpense);
+
         // Update summary cards
+        document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
         document.getElementById('balance').textContent = formatCurrency(balance);
         document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
 

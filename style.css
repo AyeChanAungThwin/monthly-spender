@@ -1717,6 +1717,10 @@ body.dark-mode .income-card .card-amount {
     color: #81c784;
 }
 
+body.dark-mode .income-card .card-icon {
+    background-color: rgba(76, 175, 80, 0.15);
+}
+
 body.dark-mode .expense-card .card-amount {
     color: #e57373;
 }
