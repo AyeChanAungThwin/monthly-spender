@@ -976,7 +976,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }),
             type: type,
             walletName: walletName,
-            amount: transactionAmount,
+            amount: parseFloat(preciseAdd(0, transactionAmount).toFixed(2)),
             description: finalDescription,
             category: category || null
         };
