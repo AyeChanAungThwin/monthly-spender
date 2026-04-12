@@ -965,7 +965,8 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             const newAmount = preciseSubtract(currentAmount, transactionAmount);
             if (newAmount < 0) {
-                alert(`Insufficient funds! Your current balance is ${formatCurrency(currentAmount)}, but you're trying to spend ${formatCurrency(transactionAmount)}. Required additional amount: ${formatCurrency(Math.abs(newAmount))}`);
+                const requiredAmount = preciseSubtract(transactionAmount, currentAmount);
+                alert(`Insufficient funds! Your current balance is ${formatCurrency(currentAmount)}, but you're trying to spend ${formatCurrency(transactionAmount)}. Required additional amount: ${formatCurrency(requiredAmount)}`);
                 return;
             }
             wallets[walletIndex].amount = newAmount.toFixed(2);
@@ -1113,7 +1114,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // For expense: if new amount is higher, subtract more; if lower, add back
             const resultAmount = preciseSubtract(currentWalletAmount, amountDifference);
             if (resultAmount < 0) {
-                alert(`Insufficient funds! The wallet "${originalWallet}" has ${formatCurrency(currentWalletAmount)}, but the updated expense of ${formatCurrency(newAmount)} requires ${formatCurrency(Math.abs(resultAmount))} more.`);
+                const requiredAmount = preciseSubtract(newAmount, currentWalletAmount);
+                alert(`Insufficient funds! The wallet "${originalWallet}" has ${formatCurrency(currentWalletAmount)}, but the updated expense of ${formatCurrency(newAmount)} requires ${formatCurrency(requiredAmount)} more.`);
                 return;
             }
             wallets[walletIndex].amount = resultAmount.toFixed(2);
