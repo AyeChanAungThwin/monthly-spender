@@ -720,12 +720,14 @@ document.addEventListener('DOMContentLoaded', function() {
         tbody.innerHTML = '';
         // Show newest transactions first
         const reversedTransactions = [...transactions].reverse();
-        reversedTransactions.forEach(function(transaction) {
+        reversedTransactions.forEach(function(transaction, reversedIndex) {
             const row = document.createElement('tr');
             const typeClass = transaction.type === 'income' ? 'income-transaction' : 'expense-transaction';
             const typeLabel = transaction.type === 'income' ? 'Income' : 'Expense';
             const amountClass = transaction.type === 'income' ? 'amount-income' : 'amount-expense';
             const amountPrefix = transaction.type === 'income' ? '+' : '-';
+            // Calculate original index since we reversed the array
+            const originalIndex = transactions.length - 1 - reversedIndex;
 
             row.innerHTML = `
                 <td>${transaction.date}</td>
@@ -733,8 +735,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${transaction.walletName}</td>
                 <td>${transaction.description || '-'}</td>
                 <td><span class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(transaction.amount)}</span></td>
+                <td>
+                    <button class="transaction-delete-btn" data-index="${originalIndex}">
+                        <img src="images/trash.png" alt="Delete">
+                    </button>
+                </td>
             `;
             tbody.appendChild(row);
+        });
+
+        // Add delete functionality
+        document.querySelectorAll('.transaction-delete-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                openDeleteTransactionModal(index);
+            });
         });
     }
 
@@ -969,6 +984,108 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial render of transactions
     renderTransactions();
+
+    // Delete Transaction Modal functionality
+    const deleteTransactionModal = document.getElementById('deleteTransactionModal');
+    const deleteTransactionModalClose = document.getElementById('deleteTransactionModalClose');
+    const deleteTransactionCancel = document.getElementById('deleteTransactionCancel');
+    const deleteTransactionConfirm = document.getElementById('deleteTransactionConfirm');
+    const updateWalletCheckbox = document.getElementById('updateWalletCheckbox');
+    const updateWalletHint = document.getElementById('updateWalletHint');
+
+    let deleteTransactionIndex = null;
+
+    function openDeleteTransactionModal(index) {
+        deleteTransactionIndex = index;
+        const transaction = transactions[index];
+
+        document.getElementById('deleteTransactionType').textContent = transaction.type === 'income' ? 'Income' : 'Expense';
+        document.getElementById('deleteTransactionWallet').textContent = transaction.walletName;
+        document.getElementById('deleteTransactionAmount').textContent = formatCurrency(transaction.amount);
+
+        // Reset checkbox and hint
+        updateWalletCheckbox.checked = false;
+        updateWalletHint.style.display = 'none';
+
+        deleteTransactionModal.classList.add('active');
+    }
+
+    // Show/hide hint based on checkbox and transaction type
+    updateWalletCheckbox.addEventListener('change', function() {
+        if (deleteTransactionIndex === null) return;
+
+        const transaction = transactions[deleteTransactionIndex];
+
+        if (this.checked) {
+            updateWalletHint.style.display = 'block';
+            if (transaction.type === 'expense') {
+                updateWalletHint.textContent = `This will add ${formatCurrency(transaction.amount)} back to "${transaction.walletName}"`;
+            } else {
+                updateWalletHint.textContent = `This will subtract ${formatCurrency(transaction.amount)} from "${transaction.walletName}"`;
+            }
+        } else {
+            updateWalletHint.style.display = 'none';
+        }
+    });
+
+    function closeDeleteTransactionModal() {
+        deleteTransactionModal.classList.remove('active');
+        deleteTransactionIndex = null;
+    }
+
+    deleteTransactionModalClose.addEventListener('click', closeDeleteTransactionModal);
+    deleteTransactionCancel.addEventListener('click', closeDeleteTransactionModal);
+
+    deleteTransactionModal.addEventListener('click', function(e) {
+        if (e.target === deleteTransactionModal) {
+            closeDeleteTransactionModal();
+        }
+    });
+
+    // Confirm delete transaction
+    deleteTransactionConfirm.addEventListener('click', function() {
+        if (deleteTransactionIndex === null) return;
+
+        const transaction = transactions[deleteTransactionIndex];
+        const shouldUpdateWallet = updateWalletCheckbox.checked;
+
+        if (shouldUpdateWallet) {
+            // Find the wallet and update its balance
+            const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
+            const walletIndex = wallets.findIndex(w => w.name === transaction.walletName);
+
+            if (walletIndex !== -1) {
+                const currentAmount = parseFloat(wallets[walletIndex].amount);
+
+                if (transaction.type === 'expense') {
+                    // Add the amount back (reverse the expense)
+                    wallets[walletIndex].amount = (currentAmount + transaction.amount).toFixed(2);
+                } else {
+                    // Subtract the amount (reverse the income)
+                    const newAmount = currentAmount - transaction.amount;
+                    if (newAmount < 0) {
+                        alert(`Cannot subtract! The wallet "${transaction.walletName}" has insufficient funds (${formatCurrency(currentAmount)}) to reverse this income transaction of ${formatCurrency(transaction.amount)}.`);
+                        return;
+                    }
+                    wallets[walletIndex].amount = newAmount.toFixed(2);
+                }
+
+                localStorage.setItem('wallets', JSON.stringify(wallets));
+                refreshWalletsFromStorage();
+            }
+        }
+
+        // Remove the transaction
+        transactions.splice(deleteTransactionIndex, 1);
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+        // Re-render
+        renderTransactions();
+        renderIncomeExpenseSummary();
+
+        // Close modal
+        closeDeleteTransactionModal();
+    });
 
     // Excel download and Clear functionality
     const downloadExcelBtn = document.getElementById('downloadExcelBtn');
