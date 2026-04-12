@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             iconOption.addEventListener('click', function() {
-                document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+                iconSelection.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
                 selectedIconInput.value = iconPath;
             });
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset form state before opening
         addWalletForm.reset();
         selectedIconInput.value = '';
-        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelectorAll('#iconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
         document.querySelector('#walletModal .modal-content h3').textContent = 'Add New Wallet';
         document.getElementById('walletName').disabled = false;
         document.getElementById('walletName').style.cursor = 'text';
@@ -442,8 +442,8 @@ document.addEventListener('DOMContentLoaded', function() {
         walletModal.classList.remove('active');
         addWalletForm.reset();
         selectedIconInput.value = '';
-        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
-        document.querySelector('.modal-content h3').textContent = 'Add New Wallet';
+        document.querySelectorAll('#iconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelector('#walletModal .modal-content h3').textContent = 'Add New Wallet';
         editingIndex = null;
     }
 
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             iconOption.addEventListener('click', function() {
-                document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+                categoryIconSelection.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
                 selectedCategoryIconInput.value = iconPath;
             });
@@ -740,7 +740,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Reset form state before opening
         addCategoryForm.reset();
         selectedCategoryIconInput.value = '';
-        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        categoryIconSelection.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
         document.querySelector('#categoryModal .modal-content h3').textContent = 'Add New Category';
         categoryEditingIndex = null;
         categoryModal.classList.add('active');
@@ -752,7 +752,7 @@ document.addEventListener('DOMContentLoaded', function() {
         categoryModal.classList.remove('active');
         addCategoryForm.reset();
         selectedCategoryIconInput.value = '';
-        document.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
+        document.querySelectorAll('#categoryIconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
         document.querySelector('#categoryModal .modal-content h3').textContent = 'Add New Category';
         categoryEditingIndex = null;
     }
