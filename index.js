@@ -72,6 +72,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (menuName === 'income-expense' && typeof renderIncomeExpenseSummary === 'function') {
                     renderIncomeExpenseSummary();
                 }
+
+                // Refresh wallets list when navigating to wallets page
+                if (menuName === 'wallets' && typeof renderWallets === 'function') {
+                    renderWallets();
+                }
+
+                // Refresh categories list when navigating to categories page
+                if (menuName === 'categories' && typeof renderCategories === 'function') {
+                    renderCategories();
+                }
             }
         });
     });
@@ -1159,6 +1169,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-render transactions
         renderTransactions();
 
+        // Re-render wallets and categories to update enabled/disabled state
+        renderWallets();
+        renderCategories();
+
         // Close modal
         closeIncomeExpenseModal();
 
@@ -1296,6 +1310,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-render
         renderTransactions();
         renderIncomeExpenseSummary();
+        renderWallets();
+        renderCategories();
 
         // Close modal
         closeEditTransactionModal();
@@ -1402,6 +1418,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-render
         renderTransactions();
         renderIncomeExpenseSummary();
+        renderWallets();
+        renderCategories();
 
         // Close modal
         closeDeleteTransactionModal();
@@ -1484,6 +1502,8 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('transactions', JSON.stringify(transactions));
         renderTransactions();
         renderIncomeExpenseSummary();
+        renderWallets();
+        renderCategories();
     });
 
     // ========================================
