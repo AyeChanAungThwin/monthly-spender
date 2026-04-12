@@ -84,6 +84,21 @@ document.addEventListener('DOMContentLoaded', function() {
         return currentCurrency.symbol + amountStr;
     }
 
+    // Precise addition to avoid floating-point errors
+    // Converts to integer cents, performs operation, converts back
+    function preciseAdd(a, b) {
+        const aCents = Math.round(parseFloat(a) * 100);
+        const bCents = Math.round(parseFloat(b) * 100);
+        return (aCents + bCents) / 100;
+    }
+
+    // Precise subtraction to avoid floating-point errors
+    function preciseSubtract(a, b) {
+        const aCents = Math.round(parseFloat(a) * 100);
+        const bCents = Math.round(parseFloat(b) * 100);
+        return (aCents - bCents) / 100;
+    }
+
     // Get country code from coordinates using reverse geocoding
     function getCountryFromCoords(lat, lon, callback) {
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
@@ -921,14 +936,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const transactionAmount = parseFloat(amount);
 
         if (type === 'income') {
-            wallets[walletIndex].amount = (currentAmount + transactionAmount).toFixed(2);
+            wallets[walletIndex].amount = preciseAdd(currentAmount, transactionAmount).toFixed(2);
         } else {
-            if (currentAmount < transactionAmount) {
-                const remainingBalance = currentAmount - transactionAmount;
-                alert(`Insufficient funds! Your current balance is ${formatCurrency(currentAmount)}, but you're trying to spend ${formatCurrency(transactionAmount)}. Required additional amount: ${formatCurrency(Math.abs(remainingBalance))}`);
+            const newAmount = preciseSubtract(currentAmount, transactionAmount);
+            if (newAmount < 0) {
+                alert(`Insufficient funds! Your current balance is ${formatCurrency(currentAmount)}, but you're trying to spend ${formatCurrency(transactionAmount)}. Required additional amount: ${formatCurrency(Math.abs(newAmount))}`);
                 return;
             }
-            wallets[walletIndex].amount = (currentAmount - transactionAmount).toFixed(2);
+            wallets[walletIndex].amount = newAmount.toFixed(2);
         }
 
         // Save updated wallets to localStorage
@@ -1056,15 +1071,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (walletIndex !== -1) {
                 const currentAmount = parseFloat(wallets[walletIndex].amount);
+                const transactionAmount = parseFloat(transaction.amount);
 
                 if (transaction.type === 'expense') {
                     // Add the amount back (reverse the expense)
-                    wallets[walletIndex].amount = (currentAmount + transaction.amount).toFixed(2);
+                    wallets[walletIndex].amount = preciseAdd(currentAmount, transactionAmount).toFixed(2);
                 } else {
                     // Subtract the amount (reverse the income)
-                    const newAmount = currentAmount - transaction.amount;
+                    const newAmount = preciseSubtract(currentAmount, transactionAmount);
                     if (newAmount < 0) {
-                        alert(`Cannot subtract! The wallet "${transaction.walletName}" has insufficient funds (${formatCurrency(currentAmount)}) to reverse this income transaction of ${formatCurrency(transaction.amount)}.`);
+                        alert(`Cannot subtract! The wallet "${transaction.walletName}" has insufficient funds (${formatCurrency(currentAmount)}) to reverse this income transaction of ${formatCurrency(transactionAmount)}.`);
                         return;
                     }
                     wallets[walletIndex].amount = newAmount.toFixed(2);
@@ -1177,13 +1193,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
         const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
 
-        // Calculate total income from wallets
+        // Calculate total income from wallets using precise addition
         let balance = 0;
         wallets.forEach(function(wallet) {
-            balance += parseFloat(wallet.amount);
+            balance = preciseAdd(balance, wallet.amount);
         });
 
-        // Calculate totals from transactions
+        // Calculate totals from transactions using precise addition
         let totalExpense = 0;
         const expensesByCategory = {};
         const monthlyData = {};
@@ -1200,16 +1216,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (transaction.type === 'income') {
-                monthlyData[monthKey].income += amount;
+                monthlyData[monthKey].income = preciseAdd(monthlyData[monthKey].income, amount);
             } else {
-                totalExpense += amount;
-                monthlyData[monthKey].expense += amount;
+                totalExpense = preciseAdd(totalExpense, amount);
+                monthlyData[monthKey].expense = preciseAdd(monthlyData[monthKey].expense, amount);
 
-                // Track expenses by category
+                // Track expenses by category using precise addition
                 if (!expensesByCategory[categoryName]) {
                     expensesByCategory[categoryName] = 0;
                 }
-                expensesByCategory[categoryName] += amount;
+                expensesByCategory[categoryName] = preciseAdd(expensesByCategory[categoryName], amount);
             }
         });
 
