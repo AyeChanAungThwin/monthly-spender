@@ -102,6 +102,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return (aCents - bCents) / 100;
     }
 
+    // Sanitize user-entered amount to avoid floating-point errors
+    // Converts to integer cents, then back to dollars
+    function sanitizeAmount(amountStr) {
+        const num = parseFloat(amountStr);
+        if (isNaN(num)) return 0;
+        // Convert to cents (integer), then back to avoid floating-point issues
+        const cents = Math.round(num * 100);
+        return cents / 100;
+    }
+
     // Get country code from coordinates using reverse geocoding
     function getCountryFromCoords(lat, lon, callback) {
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
@@ -435,6 +445,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Prevent floating-point errors on input - allow free input, just prevent invalid chars
+    const walletAmountInput = document.getElementById('walletAmount');
+    walletAmountInput.addEventListener('input', function() {
+        let value = this.value;
+        // Remove any non-numeric characters except decimal point
+        value = value.replace(/[^0-9.]/g, '');
+        // Allow only one decimal point
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // Limit to 2 decimal places (but don't force formatting)
+        if (parts.length === 2 && parts[1].length > 2) {
+            value = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+        this.value = value;
+    });
+
     // Form submission
     addWalletForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -457,6 +485,8 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        const sanitizedAmount = sanitizeAmount(amount);
+
         if (editingIndex !== null) {
             // Check if another wallet already has this name (excluding current wallet)
             const duplicateName = wallets.some((wallet, idx) =>
@@ -470,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wallets[editingIndex] = {
                 name: name,
                 icon: icon,
-                amount: preciseAdd(0, parseFloat(amount)).toFixed(2)
+                amount: sanitizedAmount.toFixed(2)
             };
         } else {
             // Check if wallet name already exists
@@ -483,7 +513,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wallets.push({
                 name: name,
                 icon: icon,
-                amount: preciseAdd(0, parseFloat(amount)).toFixed(2)
+                amount: sanitizedAmount.toFixed(2)
             });
         }
 
@@ -882,6 +912,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Prevent floating-point errors on income/expense amount input - allow free input
+    const incomeExpenseAmountInput = document.getElementById('incomeExpenseAmount');
+    incomeExpenseAmountInput.addEventListener('input', function() {
+        let value = this.value;
+        // Remove any non-numeric characters except decimal point
+        value = value.replace(/[^0-9.]/g, '');
+        // Allow only one decimal point
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // Limit to 2 decimal places (but don't force formatting)
+        if (parts.length === 2 && parts[1].length > 2) {
+            value = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+        this.value = value;
+    });
+
     // Load category icons for income/expense form
     function loadIncomeExpenseCategoryIcons(selectedIconPath = null) {
         incomeExpenseCategorySelection.innerHTML = '';
@@ -995,7 +1043,8 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Please select a wallet');
             return;
         }
-        if (!amount || parseFloat(amount) <= 0) {
+        const sanitizedAmount = sanitizeAmount(amount);
+        if (!sanitizedAmount || sanitizedAmount <= 0) {
             alert('Please enter a valid amount greater than 0');
             return;
         }
@@ -1011,7 +1060,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update wallet amount based on transaction type
         const currentAmount = parseFloat(wallets[walletIndex].amount);
-        const transactionAmount = parseFloat(amount);
+        const transactionAmount = sanitizedAmount;
 
         if (type === 'income') {
             wallets[walletIndex].amount = preciseAdd(currentAmount, transactionAmount).toFixed(2);
@@ -1116,6 +1165,24 @@ document.addEventListener('DOMContentLoaded', function() {
         editTransactionModal.classList.add('active');
     }
 
+    // Prevent floating-point errors on edit transaction amount input - allow free input
+    const editTransactionAmountInput = document.getElementById('editTransactionAmount');
+    editTransactionAmountInput.addEventListener('input', function() {
+        let value = this.value;
+        // Remove any non-numeric characters except decimal point
+        value = value.replace(/[^0-9.]/g, '');
+        // Allow only one decimal point
+        const parts = value.split('.');
+        if (parts.length > 2) {
+            value = parts[0] + '.' + parts.slice(1).join('');
+        }
+        // Limit to 2 decimal places (but don't force formatting)
+        if (parts.length === 2 && parts[1].length > 2) {
+            value = parts[0] + '.' + parts[1].substring(0, 2);
+        }
+        this.value = value;
+    });
+
     function closeEditTransactionModal() {
         editTransactionModal.classList.remove('active');
         editTransactionForm.reset();
@@ -1135,7 +1202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     editTransactionForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const newAmount = parseFloat(editTransactionAmount.value);
+        const newAmount = sanitizeAmount(editTransactionAmount.value);
         const originalAmount = parseFloat(originalTransactionAmount.value);
         const originalWallet = originalTransactionWallet.value;
         const type = editTransactionType.value;
