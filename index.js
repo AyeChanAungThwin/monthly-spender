@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             walletItem.innerHTML = `
-                <button class="wallet-edit-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
+                <button class="wallet-edit-btn" data-index="${index}">
                     <img src="images/edit.png" alt="Edit">
                 </button>
                 <button class="wallet-delete-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
@@ -344,12 +344,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
                 const usedInTransactions = transactions.some(t => t.walletName === walletName);
 
-                if (usedInTransactions) {
-                    alert(`Cannot edit wallet "${walletName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
-                    return;
-                }
-
-                openEditModal(index);
+                openEditModal(index, usedInTransactions);
             });
         });
     }
@@ -357,13 +352,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Edit wallet modal
     let editingIndex = null;
 
-    function openEditModal(index) {
+    function openEditModal(index, usedInTransactions = false) {
         editingIndex = index;
         const wallet = wallets[index];
 
         document.getElementById('walletName').value = wallet.name;
         document.getElementById('walletAmount').value = wallet.amount;
         document.querySelector('#walletModal .modal-content h3').textContent = 'Edit Wallet';
+
+        // Disable name and icon selection if wallet is used in transactions
+        document.getElementById('walletName').disabled = usedInTransactions;
+        document.getElementById('walletName').style.cursor = usedInTransactions ? 'not-allowed' : 'text';
+        document.getElementById('walletName').style.backgroundColor = usedInTransactions ? '#f5f5f5' : '';
+
+        // Disable icon selection if wallet is used in transactions
+        const iconOptions = iconSelection.querySelectorAll('.icon-option');
+        iconOptions.forEach(opt => {
+            opt.style.pointerEvents = usedInTransactions ? 'none' : 'auto';
+            opt.style.opacity = usedInTransactions ? '0.5' : '1';
+        });
 
         loadWalletIcons(wallet.icon);
         walletModal.classList.add('active');
@@ -497,12 +504,12 @@ document.addEventListener('DOMContentLoaded', function() {
     addWalletForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const name = document.getElementById('walletName').value.trim();
+        const nameInput = document.getElementById('walletName');
         const icon = selectedIconInput.value;
         const amount = document.getElementById('walletAmount').value;
 
         // Validation
-        if (!name) {
+        if (!nameInput.value.trim()) {
             alert('Please enter a wallet name');
             return;
         }
@@ -518,20 +525,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const sanitizedAmount = sanitizeAmount(amount);
 
         if (editingIndex !== null) {
-            // Check if another wallet already has this name (excluding current wallet)
-            const duplicateName = wallets.some((wallet, idx) =>
-                idx !== editingIndex && wallet.name.toLowerCase() === name.toLowerCase()
-            );
-            if (duplicateName) {
-                alert('A wallet with this name already exists. Please use a different name.');
-                return;
+            // Check if wallet is used in transactions (name field is disabled)
+            const walletName = wallets[editingIndex].name;
+            const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+            const usedInTransactions = transactions.some(t => t.walletName === walletName);
+
+            if (usedInTransactions) {
+                // Only update amount when wallet is used in transactions
+                wallets[editingIndex].amount = sanitizedAmount.toFixed(2);
+            } else {
+                const name = nameInput.value.trim();
+                // Check if another wallet already has this name (excluding current wallet)
+                const duplicateName = wallets.some((wallet, idx) =>
+                    idx !== editingIndex && wallet.name.toLowerCase() === name.toLowerCase()
+                );
+                if (duplicateName) {
+                    alert('A wallet with this name already exists. Please use a different name.');
+                    return;
+                }
+                // Update all fields for wallets not used in transactions
+                wallets[editingIndex] = {
+                    name: name,
+                    icon: icon,
+                    amount: sanitizedAmount.toFixed(2)
+                };
             }
-            // Update existing wallet
-            wallets[editingIndex] = {
-                name: name,
-                icon: icon,
-                amount: sanitizedAmount.toFixed(2)
-            };
         } else {
             // Check if wallet name already exists
             const duplicateName = wallets.some(wallet => wallet.name.toLowerCase() === name.toLowerCase());
