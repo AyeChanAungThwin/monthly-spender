@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize title bar
     updateTitleBar();
-    setInterval(updateTitleBar, 1000);
+    setInterval(updateTitleBarTimeOnly, 1000);
+
+    // Load location only once on page load
+    loadLocationOnce();
 
     const menuItems = document.querySelectorAll('.menu-item');
     const contentSections = document.querySelectorAll('.content-section');
@@ -148,8 +151,19 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update timezone
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         document.getElementById('timezone').textContent = timezone;
+    }
 
-        // Update location (using browser's geolocation if available)
+    // Update only time in title bar (for setInterval)
+    function updateTitleBarTimeOnly() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('currentTime').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    // Load location only once
+    function loadLocationOnce() {
         const locationEl = document.getElementById('location');
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
