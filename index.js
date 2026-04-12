@@ -240,6 +240,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load wallets from localStorage
     let wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
 
+    // Auto-populate default wallets if none exist
+    function populateDefaultWallets() {
+        if (wallets.length === 0) {
+            wallets = [
+                { name: 'Banking', icon: 'images/wallets/banking.png', amount: '0.00' },
+                { name: 'Cash', icon: 'images/wallets/money.png', amount: '0.00' },
+                { name: 'Digital Cash', icon: 'images/wallets/wallet.png', amount: '0.00' },
+                { name: 'Coins', icon: 'images/wallets/coins.png', amount: '0.00' }
+            ];
+            localStorage.setItem('wallets', JSON.stringify(wallets));
+        }
+    }
+
     // Render wallets
     function renderWallets() {
         walletsList.innerHTML = '';
@@ -271,6 +284,15 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 const walletName = wallets[index].name;
+
+                // Check if wallet is used in any transaction
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const usedInTransactions = transactions.some(t => t.walletName === walletName);
+
+                if (usedInTransactions) {
+                    alert(`Cannot delete wallet "${walletName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
+                    return;
+                }
 
                 const confirmed = confirm(`Are you sure you want to delete "${walletName}"? This action cannot be undone.`);
                 if (!confirmed) {
@@ -448,7 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wallets[editingIndex] = {
                 name: name,
                 icon: icon,
-                amount: parseFloat(amount).toFixed(2)
+                amount: preciseAdd(0, parseFloat(amount)).toFixed(2)
             };
         } else {
             // Check if wallet name already exists
@@ -461,7 +483,7 @@ document.addEventListener('DOMContentLoaded', function() {
             wallets.push({
                 name: name,
                 icon: icon,
-                amount: parseFloat(amount).toFixed(2)
+                amount: preciseAdd(0, parseFloat(amount)).toFixed(2)
             });
         }
 
@@ -476,6 +498,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initial render
+    populateDefaultWallets();
     renderWallets();
 
     // Categories functionality
@@ -490,6 +513,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load categories from localStorage
     let categories = JSON.parse(localStorage.getItem('categories') || '[]');
+
+    // Auto-populate default categories if none exist
+    function populateDefaultCategories() {
+        if (categories.length === 0) {
+            categories = [
+                { name: 'Eating out', icon: 'images/categories/food.png' },
+                { name: 'Taxi', icon: 'images/categories/transportation.png' },
+                { name: 'Shopping', icon: 'images/categories/shopping.png' },
+                { name: 'Apartment Rental', icon: 'images/categories/rent.png' },
+                { name: 'Electricity Bill', icon: 'images/categories/bill.png' },
+                { name: 'Fuel', icon: 'images/categories/fuel.png' },
+                { name: 'Gift', icon: 'images/categories/gift.png' },
+                { name: 'Kids', icon: 'images/categories/kids.png' },
+                { name: 'Medical', icon: 'images/categories/health.png' },
+                { name: 'Trip', icon: 'images/categories/travel.png' },
+                { name: 'Drinks', icon: 'images/categories/beverage.png' }
+            ];
+            localStorage.setItem('categories', JSON.stringify(categories));
+        }
+    }
 
     // Render categories
     function renderCategories() {
@@ -521,6 +564,15 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 const categoryName = categories[index].name;
+
+                // Check if category is used in any transaction (stored in description field)
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                const usedInTransactions = transactions.some(t => t.description === categoryName);
+
+                if (usedInTransactions) {
+                    alert(`Cannot delete category "${categoryName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
+                    return;
+                }
 
                 const confirmed = confirm(`Are you sure you want to delete "${categoryName}"? This action cannot be undone.`);
                 if (!confirmed) {
@@ -692,6 +744,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Initial render
+    populateDefaultCategories();
     renderCategories();
 
     // Income/Expense Modal functionality
@@ -1002,7 +1055,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }),
             type: type,
             walletName: walletName,
-            amount: parseFloat(preciseAdd(0, transactionAmount).toFixed(2)),
+            amount: preciseAdd(0, transactionAmount).toFixed(2),
             description: finalDescription,
             category: category || null
         };
@@ -1125,8 +1178,8 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('wallets', JSON.stringify(wallets));
         refreshWalletsFromStorage();
 
-        // Update the transaction with new amount
-        transactions[editTransactionIndex].amount = newAmount;
+        // Update the transaction with new amount (using precise arithmetic)
+        transactions[editTransactionIndex].amount = preciseAdd(0, newAmount).toFixed(2);
         localStorage.setItem('transactions', JSON.stringify(transactions));
 
         // Re-render
@@ -1206,26 +1259,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
             const walletIndex = wallets.findIndex(w => w.name === transaction.walletName);
 
-            if (walletIndex !== -1) {
-                const currentAmount = parseFloat(wallets[walletIndex].amount);
-                const transactionAmount = parseFloat(transaction.amount);
-
-                if (transaction.type === 'expense') {
-                    // Add the amount back (reverse the expense)
-                    wallets[walletIndex].amount = preciseAdd(currentAmount, transactionAmount).toFixed(2);
-                } else {
-                    // Subtract the amount (reverse the income)
-                    const newAmount = preciseSubtract(currentAmount, transactionAmount);
-                    if (newAmount < 0) {
-                        alert(`Cannot subtract! The wallet "${transaction.walletName}" has insufficient funds (${formatCurrency(currentAmount)}) to reverse this income transaction of ${formatCurrency(transactionAmount)}.`);
-                        return;
-                    }
-                    wallets[walletIndex].amount = newAmount.toFixed(2);
-                }
-
-                localStorage.setItem('wallets', JSON.stringify(wallets));
-                refreshWalletsFromStorage();
+            if (walletIndex === -1) {
+                alert(`Wallet "${transaction.walletName}" no longer exists. Cannot update wallet balance. The transaction will be deleted without reversing its effect.`);
+                return;
             }
+
+            const currentAmount = parseFloat(wallets[walletIndex].amount);
+            const transactionAmount = parseFloat(transaction.amount);
+
+            if (transaction.type === 'expense') {
+                // Add the amount back (reverse the expense)
+                wallets[walletIndex].amount = preciseAdd(currentAmount, transactionAmount).toFixed(2);
+            } else {
+                // Subtract the amount (reverse the income)
+                const resultAmount = preciseSubtract(currentAmount, transactionAmount);
+                if (resultAmount < 0) {
+                    alert(`Cannot subtract! The wallet "${transaction.walletName}" has insufficient funds (${formatCurrency(currentAmount)}) to reverse this income transaction of ${formatCurrency(transactionAmount)}.`);
+                    return;
+                }
+                wallets[walletIndex].amount = resultAmount.toFixed(2);
+            }
+
+            localStorage.setItem('wallets', JSON.stringify(wallets));
+            refreshWalletsFromStorage();
         }
 
         // Remove the transaction
@@ -1308,7 +1364,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Clear all transactions functionality
     clearTransactionsBtn.addEventListener('click', function() {
-        const confirmed = confirm('Are you sure you want to clear all transactions? This action cannot be undone.');
+        const confirmed = confirm('Are you sure you want to clear all transactions? This action cannot be undone.\n\nNote: Clearing transactions will NOT reverse or adjust wallet balances.');
         if (!confirmed) {
             return;
         }
@@ -1372,7 +1428,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Calculate average monthly expense
         const uniqueMonths = Object.keys(monthlyData);
-        const avgMonthlyExpense = uniqueMonths.length > 0 ? totalExpense / uniqueMonths.length : 0;
+        const avgMonthlyExpense = uniqueMonths.length > 0 ? Math.round((totalExpense / uniqueMonths.length) * 100) / 100 : 0;
         document.getElementById('avgMonthlyExpense').textContent = formatCurrency(avgMonthlyExpense);
 
         // Calculate average remaining usage per day for the rest of the month
@@ -1381,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentDay = now.getDate();
         const remainingDays = daysInMonth - currentDay + 1; // From current day to end of month (inclusive)
         // Average remaining usage per day = balance / remaining days
-        const avgRemainingPerDay = remainingDays > 0 ? balance / remainingDays : balance;
+        const avgRemainingPerDay = remainingDays > 0 ? Math.round((balance / remainingDays) * 100) / 100 : balance;
         document.getElementById('avgRemainingThisMonth').textContent = formatCurrency(avgRemainingPerDay);
 
         // Render charts
