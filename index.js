@@ -320,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const usedInTransactions = transactions.some(t => t.walletName === walletName);
 
                 if (usedInTransactions) {
+                    alert(`Cannot delete wallet "${walletName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
                     return;
                 }
 
@@ -633,6 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const usedInTransactions = transactions.some(t => t.description === categoryName);
 
                 if (usedInTransactions) {
+                    alert(`Cannot delete category "${categoryName}" because it is used in one or more transactions. Please delete or update those transactions first.`);
                     return;
                 }
 
