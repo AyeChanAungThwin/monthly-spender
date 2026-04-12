@@ -486,7 +486,7 @@ body.dark-mode .google-signin-btn img {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Wallet item that is used in transactions - only delete button disabled */
+/* Wallet item that is used in transactions - only amount editable */
 .wallet-item-used {
     border-color: #e0e0e0;
 }
@@ -495,11 +495,6 @@ body.dark-mode .google-signin-btn img {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.wallet-item-used .wallet-delete-btn {
-    cursor: not-allowed;
-}
-
-.wallet-item-used .wallet-delete-btn img,
 .wallet-item-used > img {
     filter: grayscale(100%);
 }
@@ -1062,16 +1057,6 @@ body.dark-mode .wallet-delete-btn:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.category-item-used .category-edit-btn,
-.category-item-used .category-delete-btn {
-    cursor: not-allowed;
-}
-
-.category-item-used .category-edit-btn img,
-.category-item-used .category-delete-btn img,
-.category-item-used > img {
-    filter: grayscale(100%);
-}
 
 .category-edit-btn,
 .category-delete-btn {

@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="wallet-edit-btn" data-index="${index}">
                     <img src="images/edit.png" alt="Edit">
                 </button>
-                <button class="wallet-delete-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
+                <button class="wallet-delete-btn" data-index="${index}">
                     <img src="images/trash.png" alt="Delete">
                 </button>
                 <img src="${wallet.icon}" alt="${wallet.name}">
@@ -609,10 +609,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             categoryItem.innerHTML = `
-                <button class="category-edit-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
+                <button class="category-edit-btn" data-index="${index}">
                     <img src="images/edit.png" alt="Edit">
                 </button>
-                <button class="category-delete-btn" data-index="${index}" ${usedInTransactions ? 'disabled' : ''}>
+                <button class="category-delete-btn" data-index="${index}">
                     <img src="images/trash.png" alt="Delete">
                 </button>
                 <img src="${category.icon}" alt="${category.name}">
