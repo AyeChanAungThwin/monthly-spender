@@ -765,12 +765,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${transaction.description || '-'}</td>
                 <td><span class="transaction-amount ${amountClass}">${amountPrefix}${formatCurrency(transaction.amount)}</span></td>
                 <td>
+                    <button class="transaction-edit-btn" data-index="${originalIndex}">
+                        <img src="images/edit.png" alt="Edit">
+                    </button>
                     <button class="transaction-delete-btn" data-index="${originalIndex}">
                         <img src="images/trash.png" alt="Delete">
                     </button>
                 </td>
             `;
             tbody.appendChild(row);
+        });
+
+        // Add edit functionality
+        document.querySelectorAll('.transaction-edit-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                openEditTransactionModal(index);
+            });
         });
 
         // Add delete functionality
@@ -1013,6 +1024,116 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial render of transactions
     renderTransactions();
+
+    // Edit Transaction Modal functionality
+    const editTransactionModal = document.getElementById('editTransactionModal');
+    const editTransactionModalClose = document.getElementById('editTransactionModalClose');
+    const editTransactionCancel = document.getElementById('editTransactionBtnCancel');
+    const editTransactionForm = document.getElementById('editTransactionForm');
+    const editTransactionAmount = document.getElementById('editTransactionAmount');
+    const editTransactionTypeDisplay = document.getElementById('editTransactionTypeDisplay');
+    const editTransactionWalletDisplay = document.getElementById('editTransactionWalletDisplay');
+    const editTransactionDescriptionDisplay = document.getElementById('editTransactionDescriptionDisplay');
+    const originalTransactionAmount = document.getElementById('originalTransactionAmount');
+    const originalTransactionWallet = document.getElementById('originalTransactionWallet');
+    const editTransactionType = document.getElementById('editTransactionType');
+    const editTransactionId = document.getElementById('editTransactionId');
+
+    let editTransactionIndex = null;
+
+    function openEditTransactionModal(index) {
+        editTransactionIndex = index;
+        const transaction = transactions[index];
+
+        // Store original values for wallet update calculation
+        originalTransactionAmount.value = transaction.amount;
+        originalTransactionWallet.value = transaction.walletName;
+        editTransactionType.value = transaction.type;
+        editTransactionId.value = transaction.id;
+
+        // Display read-only info
+        editTransactionTypeDisplay.textContent = transaction.type === 'income' ? 'Income' : 'Expense';
+        editTransactionWalletDisplay.textContent = transaction.walletName;
+        editTransactionDescriptionDisplay.textContent = transaction.description || 'No description';
+
+        // Set editable amount
+        editTransactionAmount.value = transaction.amount;
+
+        editTransactionModal.classList.add('active');
+    }
+
+    function closeEditTransactionModal() {
+        editTransactionModal.classList.remove('active');
+        editTransactionForm.reset();
+        editTransactionIndex = null;
+    }
+
+    editTransactionModalClose.addEventListener('click', closeEditTransactionModal);
+    editTransactionCancel.addEventListener('click', closeEditTransactionModal);
+
+    editTransactionModal.addEventListener('click', function(e) {
+        if (e.target === editTransactionModal) {
+            closeEditTransactionModal();
+        }
+    });
+
+    // Edit transaction form submission - only amount is edited
+    editTransactionForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const newAmount = parseFloat(editTransactionAmount.value);
+        const originalAmount = parseFloat(originalTransactionAmount.value);
+        const originalWallet = originalTransactionWallet.value;
+        const type = editTransactionType.value;
+
+        // Validation
+        if (!newAmount || newAmount <= 0) {
+            alert('Please enter a valid amount greater than 0');
+            return;
+        }
+
+        const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
+        const walletIndex = wallets.findIndex(w => w.name === originalWallet);
+
+        if (walletIndex === -1) {
+            alert('Wallet not found');
+            return;
+        }
+
+        // Calculate the difference between new and original amount
+        const amountDifference = preciseSubtract(newAmount, originalAmount);
+
+        // Apply the difference to the wallet
+        const currentWalletAmount = parseFloat(wallets[walletIndex].amount);
+
+        if (type === 'income') {
+            // For income: if new amount is higher, add difference; if lower, subtract difference
+            wallets[walletIndex].amount = preciseAdd(currentWalletAmount, amountDifference).toFixed(2);
+        } else {
+            // For expense: if new amount is higher, subtract more; if lower, add back
+            const resultAmount = preciseSubtract(currentWalletAmount, amountDifference);
+            if (resultAmount < 0) {
+                alert(`Insufficient funds! The wallet "${originalWallet}" has ${formatCurrency(currentWalletAmount)}, but the updated expense of ${formatCurrency(newAmount)} requires ${formatCurrency(Math.abs(resultAmount))} more.`);
+                return;
+            }
+            wallets[walletIndex].amount = resultAmount.toFixed(2);
+        }
+
+        // Save updated wallets
+        localStorage.setItem('wallets', JSON.stringify(wallets));
+        refreshWalletsFromStorage();
+
+        // Update the transaction with new amount
+        transactions[editTransactionIndex].amount = newAmount;
+        localStorage.setItem('transactions', JSON.stringify(transactions));
+
+        // Re-render
+        renderTransactions();
+        renderIncomeExpenseSummary();
+
+        // Close modal
+        closeEditTransactionModal();
+    });
 
     // Delete Transaction Modal functionality
     const deleteTransactionModal = document.getElementById('deleteTransactionModal');

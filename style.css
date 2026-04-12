@@ -1334,6 +1334,7 @@ body.dark-mode .transactions-empty-state .empty-state-icon {
     color: #c62828;
 }
 
+.transaction-edit-btn,
 .transaction-delete-btn {
     border: none;
     background-color: transparent;
@@ -1345,6 +1346,13 @@ body.dark-mode .transactions-empty-state .empty-state-icon {
     border-radius: 50%;
     transition: all 0.2s ease;
     opacity: 0.6;
+    margin-bottom: 4px;
+}
+
+.transaction-edit-btn:hover {
+    opacity: 1;
+    background-color: rgba(74, 144, 217, 0.15);
+    transform: scale(1.1);
 }
 
 .transaction-delete-btn:hover {
@@ -1353,18 +1361,25 @@ body.dark-mode .transactions-empty-state .empty-state-icon {
     transform: scale(1.1);
 }
 
+.transaction-edit-btn img,
 .transaction-delete-btn img {
     width: 16px;
     height: 16px;
     object-fit: contain;
 }
 
+body.dark-mode .transaction-edit-btn img,
 body.dark-mode .transaction-delete-btn img {
     filter: brightness(0) invert(1) opacity(0.5);
 }
 
+body.dark-mode .transaction-edit-btn:hover img,
 body.dark-mode .transaction-delete-btn:hover img {
     filter: brightness(0) invert(1) opacity(0.7);
+}
+
+body.dark-mode .transaction-edit-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 body.dark-mode .transaction-delete-btn:hover {

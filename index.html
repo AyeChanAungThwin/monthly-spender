@@ -283,6 +283,40 @@
                 </div>
             </div>
 
+            <!-- Edit Transaction Modal -->
+            <div class="modal-overlay" id="editTransactionModal">
+                <div class="modal-content">
+                    <button class="modal-close" id="editTransactionModalClose">&times;</button>
+                    <h3>Edit Transaction</h3>
+                    <form id="editTransactionForm">
+                        <div class="form-group">
+                            <label>Transaction Type</label>
+                            <p id="editTransactionTypeDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px; font-weight: 500;"></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet</label>
+                            <p id="editTransactionWalletDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px;"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTransactionAmount">Amount</label>
+                            <input type="number" id="editTransactionAmount" placeholder="0.00" step="0.01" min="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description/Category</label>
+                            <p id="editTransactionDescriptionDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px;"></p>
+                        </div>
+                        <input type="hidden" id="originalTransactionAmount">
+                        <input type="hidden" id="originalTransactionWallet">
+                        <input type="hidden" id="editTransactionType">
+                        <input type="hidden" id="editTransactionId">
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel" id="editTransactionBtnCancel">Cancel</button>
+                            <button type="submit" class="btn-submit">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Delete Transaction Confirmation Modal -->
             <div class="modal-overlay" id="deleteTransactionModal">
                 <div class="modal-content">
