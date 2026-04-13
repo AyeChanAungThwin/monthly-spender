@@ -2,6 +2,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Language configuration
     let currentLanguage = localStorage.getItem('language') || 'en';
 
+    // Available languages mapping - easily extensible for future languages
+    const languages = {
+        'en': English,
+        'my': Myanmar,
+        'zh': Chinese,
+        'th': Thailand,
+        'ja': Japan,
+        'vi': Vietnam,
+        'km': Cambodia,
+        'fil': Philippines
+    };
+
     // Apply language on load
     applyLanguage(currentLanguage);
 
@@ -47,9 +59,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return key.split('.').reduce((prev, curr) => prev ? prev[curr] : null, obj);
     }
 
+    // Get current translations using the languages object
+    function getTranslations() {
+        return languages[currentLanguage] || English;
+    }
+
     // Apply language translations to all elements with data-i18n attribute
     function applyLanguage(lang) {
-        const translations = lang === 'my' ? Myanmar : English;
+        currentLanguage = lang;
+        const translations = getTranslations();
 
         // Translate all elements with data-i18n attribute
         document.querySelectorAll('[data-i18n]').forEach(function(el) {
@@ -333,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Render wallets
     function renderWallets() {
         walletsList.innerHTML = '';
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         if (wallets.length === 0) {
             const noWalletsMsg = getNestedValue(translations, 'noData.noWallets') || 'No wallets added yet. Click the + button to add one.';
             walletsList.innerHTML = '<p style="color: #888; text-align: center; grid-column: 1/-1;">' + noWalletsMsg + '</p>';
@@ -373,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 const walletName = wallets[index].name;
-                const translations = currentLanguage === 'my' ? Myanmar : English;
+                const translations = getTranslations();
 
                 // Check if wallet is used in any transaction
                 const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
@@ -421,7 +439,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('walletName').value = wallet.name;
         document.getElementById('walletAmount').value = wallet.amount;
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         document.querySelector('#walletModal .modal-content h3').textContent = translations.modals.editWallet;
 
         // Disable name and icon selection if wallet is used in transactions
@@ -487,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addWalletForm.reset();
         selectedIconInput.value = '';
         document.querySelectorAll('#iconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         document.querySelector('#walletModal .modal-content h3').textContent = translations.modals.addWallet;
         document.getElementById('walletName').disabled = false;
         document.getElementById('walletName').style.cursor = 'text';
@@ -508,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addWalletForm.reset();
         selectedIconInput.value = '';
         document.querySelectorAll('#iconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         document.querySelector('#walletModal .modal-content h3').textContent = translations.modals.addWallet;
         editingIndex = null;
     }
@@ -661,7 +679,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Render categories
     function renderCategories() {
         categoriesList.innerHTML = '';
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         if (categories.length === 0) {
             const noCategoriesMsg = getNestedValue(translations, 'noData.noCategories') || 'No categories added yet. Click the + button to add one.';
             categoriesList.innerHTML = '<p style="color: #888; text-align: center; grid-column: 1/-1;">' + noCategoriesMsg + '</p>';
@@ -700,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('click', function() {
                 const index = parseInt(this.getAttribute('data-index'));
                 const categoryName = categories[index].name;
-                const translations = currentLanguage === 'my' ? Myanmar : English;
+                const translations = getTranslations();
 
                 // Check if category is used in any transaction (stored in description field)
                 const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
@@ -751,7 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openCategoryEditModal(index) {
         categoryEditingIndex = index;
         const category = categories[index];
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
 
         document.getElementById('categoryName').value = category.name;
         document.querySelector('#categoryModal .modal-content h3').textContent = translations.modals.editCategory;
@@ -820,7 +838,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addCategoryForm.reset();
         selectedCategoryIconInput.value = '';
         categoryIconSelection.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         document.querySelector('#categoryModal .modal-content h3').textContent = translations.modals.addCategory;
         categoryEditingIndex = null;
         categoryModal.classList.add('active');
@@ -833,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addCategoryForm.reset();
         selectedCategoryIconInput.value = '';
         document.querySelectorAll('#categoryIconSelection .icon-option').forEach(opt => opt.classList.remove('selected'));
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         document.querySelector('#categoryModal .modal-content h3').textContent = translations.modals.addCategory;
         categoryEditingIndex = null;
     }
@@ -965,7 +983,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tbody.innerHTML = '';
         // Show newest transactions first
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         const reversedTransactions = [...transactions].reverse();
         reversedTransactions.forEach(function(transaction, reversedIndex) {
             const row = document.createElement('tr');
@@ -1014,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Open income modal
     incomeBtn.addEventListener('click', function() {
         incomeExpenseType.value = 'income';
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         incomeExpenseModalTitle.textContent = translations.modals.addIncome;
         loadWalletsToDropdown();
         loadIncomeExpenseCategoryIcons();
@@ -1026,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Open expense modal
     expenseBtn.addEventListener('click', function() {
         incomeExpenseType.value = 'expense';
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         incomeExpenseModalTitle.textContent = translations.modals.addExpense;
         loadWalletsToDropdown();
         loadIncomeExpenseCategoryIcons();
@@ -1037,7 +1055,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load wallets into dropdown
     function loadWalletsToDropdown() {
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         const wallets = JSON.parse(localStorage.getItem('wallets') || '[]');
         const chooseWalletMsg = getNestedValue(translations, 'incomeExpense.chooseWallet') || 'Choose a wallet...';
         const noWalletsMsg = getNestedValue(translations, 'incomeExpense.noWallets') || 'No wallets available';
@@ -1224,14 +1242,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validation
         if (!walletName) {
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const selectWalletMsg = getNestedValue(translations, 'validation.selectWallet') || 'Please select a wallet';
             alert(selectWalletMsg);
             return;
         }
         const sanitizedAmount = sanitizeAmount(amount);
         if (!sanitizedAmount || sanitizedAmount <= 0) {
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const enterValidAmountMsg = getNestedValue(translations, 'validation.enterValidAmountGreater') || 'Please enter a valid amount greater than 0';
             alert(enterValidAmountMsg);
             return;
@@ -1242,7 +1260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const walletIndex = wallets.findIndex(w => w.name === walletName);
 
         if (walletIndex === -1) {
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const walletNotFoundMsg = getNestedValue(translations, 'validation.walletNotFound') || 'Selected wallet not found';
             alert(walletNotFoundMsg);
             return;
@@ -1258,7 +1276,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newAmount = preciseSubtract(currentAmount, transactionAmount);
             if (newAmount < 0) {
                 const requiredAmount = preciseSubtract(transactionAmount, currentAmount);
-                const translations = currentLanguage === 'my' ? Myanmar : English;
+                const translations = getTranslations();
                 const insufficientFundsMsg = getNestedValue(translations, 'validation.insufficientFunds')
                     .replace('{0}', formatCurrency(currentAmount))
                     .replace('{1}', formatCurrency(transactionAmount))
@@ -1346,7 +1364,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openEditTransactionModal(index) {
         editTransactionIndex = index;
         const transaction = transactions[index];
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
 
         // Store original values for wallet update calculation
         originalTransactionAmount.value = transaction.amount;
@@ -1409,7 +1427,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validation
         if (!newAmount || newAmount <= 0) {
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const enterValidAmountMsg = getNestedValue(translations, 'validation.enterValidAmountGreater') || 'Please enter a valid amount greater than 0';
             alert(enterValidAmountMsg);
             return;
@@ -1419,7 +1437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const walletIndex = wallets.findIndex(w => w.name === originalWallet);
 
         if (walletIndex === -1) {
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const walletNotFoundMsg = getNestedValue(translations, 'validation.walletNotFound') || 'Selected wallet not found';
             alert(walletNotFoundMsg);
             return;
@@ -1439,7 +1457,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const resultAmount = preciseSubtract(currentWalletAmount, amountDifference);
             if (resultAmount < 0) {
                 const requiredAmount = preciseSubtract(newAmount, currentWalletAmount);
-                const translations = currentLanguage === 'my' ? Myanmar : English;
+                const translations = getTranslations();
                 const insufficientFundsMsg = getNestedValue(translations, 'validation.insufficientFundsUpdate')
                     .replace('{0}', originalWallet)
                     .replace('{1}', formatCurrency(currentWalletAmount))
@@ -1482,7 +1500,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openDeleteTransactionModal(index) {
         deleteTransactionIndex = index;
         const transaction = transactions[index];
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
 
         document.getElementById('deleteTransactionType').textContent = transaction.type === 'income' ? (getNestedValue(translations, 'incomeExpense.income') || 'Income') : (getNestedValue(translations, 'incomeExpense.expense') || 'Expense');
         document.getElementById('deleteTransactionWallet').textContent = transaction.walletName;
@@ -1500,7 +1518,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (deleteTransactionIndex === null) return;
 
         const transaction = transactions[deleteTransactionIndex];
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
 
         if (this.checked) {
             updateWalletHint.style.display = 'block';
@@ -1541,7 +1559,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const walletIndex = wallets.findIndex(w => w.name === transaction.walletName);
 
             if (walletIndex === -1) {
-                const translations = currentLanguage === 'my' ? Myanmar : English;
+                const translations = getTranslations();
                 const walletNotFoundMsg = getNestedValue(translations, 'validation.walletNotFoundDelete').replace('{0}', transaction.walletName) || `Wallet "${transaction.walletName}" no longer exists. Cannot update wallet balance. The transaction will be deleted without reversing its effect.`;
                 alert(walletNotFoundMsg);
                 return;
@@ -1557,7 +1575,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Subtract the amount (reverse the income)
                 const resultAmount = preciseSubtract(currentAmount, transactionAmount);
                 if (resultAmount < 0) {
-                    const translations = currentLanguage === 'my' ? Myanmar : English;
+                    const translations = getTranslations();
                     const cannotSubtractMsg = getNestedValue(translations, 'validation.cannotSubtract')
                         .replace('{0}', transaction.walletName)
                         .replace('{1}', formatCurrency(currentAmount))
@@ -1592,7 +1610,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     downloadExcelBtn.addEventListener('click', async function() {
         const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
 
         if (transactions.length === 0) {
             const noTransactionsMsg = getNestedValue(translations, 'validation.noTransactionsExport') || 'No transactions to export.';
@@ -1650,7 +1668,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         } catch (error) {
             console.error('Error exporting transactions:', error);
-            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const translations = getTranslations();
             const exportFailedMsg = getNestedValue(translations, 'validation.exportFailed') || 'Failed to export transactions. Please try again.';
             alert(exportFailedMsg);
         }
@@ -1658,7 +1676,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Clear all transactions functionality
     clearTransactionsBtn.addEventListener('click', function() {
-        const translations = currentLanguage === 'my' ? Myanmar : English;
+        const translations = getTranslations();
         const clearConfirmMsg = getNestedValue(translations, 'validation.clearConfirm') || 'Are you sure you want to clear all transactions? This action cannot be undone.\n\nNote: Clearing transactions will NOT reverse or adjust wallet balances.';
         const confirmed = confirm(clearConfirmMsg);
         if (!confirmed) {
