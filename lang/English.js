@@ -14,6 +14,7 @@ const English = {
     },
     transaction: {
         title: "Transactions",
+        hint: "Download all transactions as Excel backup for new devices. Upload previous transactions to restore data - uploading won't override existing transactions.",
         clearAll: "Clear All",
         downloadExcel: "Download Excel",
         uploadExcel: "Upload Excel",

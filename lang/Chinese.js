@@ -14,6 +14,7 @@ const Chinese = {
     },
     transaction: {
         title: "交易记录",
+        hint: "下载所有交易记录作为 Excel 备份，以便在新设备上使用。上传之前的交易记录以恢复数据 - 上传不会覆盖现有交易。",
         clearAll: "清除全部",
         downloadExcel: "下载 Excel",
         uploadExcel: "上传 Excel",

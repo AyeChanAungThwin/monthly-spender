@@ -14,6 +14,7 @@ const Vietnam = {
     },
     transaction: {
         title: "Giao dịch",
+        hint: "Tải xuống tất cả giao dịch làm bản sao lưu Excel cho thiết bị mới. Tải lên giao dịch trước đó để khôi phục dữ liệu - tải lên sẽ không ghi đè lên giao dịch hiện có.",
         clearAll: "Xóa tất cả",
         downloadExcel: "Tải xuống Excel",
         uploadExcel: "Tải lên Excel",

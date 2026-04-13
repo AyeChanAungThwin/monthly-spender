@@ -14,6 +14,7 @@ const Philippines = {
     },
     transaction: {
         title: "Mga Transaksyon",
+        hint: "I-download ang lahat ng transaksyon bilang Excel backup para sa bagong device. I-upload ang mga naunang transaksyon upang i-restore ang data - ang pag-upload ay hindi mag-o-override ng mga umiiral na transaksyon.",
         clearAll: "I-clear All",
         downloadExcel: "I-download ang Excel",
         uploadExcel: "I-upload ang Excel",

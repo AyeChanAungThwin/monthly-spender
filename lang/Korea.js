@@ -14,6 +14,7 @@ const Korea = {
     },
     transaction: {
         title: "거래 내역",
+        hint: "모든 거래를 Excel 파일로 다운로드하여 새 장치를 위해 백업하세요. 이전 거래를 업로드하여 데이터를 복원 - 업로드해도 기존 거래는 덮어쓰지 않습니다.",
         clearAll: "모두 지우기",
         downloadExcel: "Excel 다운로드",
         uploadExcel: "Excel 업로드",

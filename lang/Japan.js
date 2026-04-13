@@ -14,6 +14,7 @@ const Japan = {
     },
     transaction: {
         title: "取引履歴",
+        hint: "すべての取引を Excel ファイルとしてダウンロードし、新しいデバイス用にバックアップできます。以前の取引をアップロードして復元 - アップロードしても既存の取引は上書きされません。",
         clearAll: "すべてクリア",
         downloadExcel: "Excel をダウンロード",
         uploadExcel: "Excel をアップロード",
