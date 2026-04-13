@@ -573,9 +573,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const nameInput = document.getElementById('walletName');
         const icon = selectedIconInput.value;
         const amount = document.getElementById('walletAmount').value;
+        const name = nameInput.value.trim();
 
         // Validation
-        if (!nameInput.value.trim()) {
+        if (!name) {
             const enterWalletNameMsg = getNestedValue(translations, 'validation.enterWalletName') || 'Please enter a wallet name';
             alert(enterWalletNameMsg);
             return;
