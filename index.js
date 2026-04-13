@@ -286,6 +286,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentLanguage = this.value;
             localStorage.setItem('language', currentLanguage);
             applyLanguage(currentLanguage);
+            // Re-render dynamic content with new language
+            renderTransactions();
+            renderWallets();
+            renderCategories();
         });
     }
 
