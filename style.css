@@ -110,6 +110,43 @@ body {
     gap: 10px;
 }
 
+/* Settings Button */
+.settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    background-color: #d0d0d0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.settings-btn:hover {
+    background-color: #dee2e6;
+    transform: scale(1.1);
+}
+
+.settings-btn img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+body.dark-mode .settings-btn {
+    background-color: #2a2a3e;
+}
+
+body.dark-mode .settings-btn:hover {
+    background-color: #3a3a4e;
+}
+
+body.dark-mode .settings-btn img {
+    filter: brightness(0) invert(1) opacity(0.8);
+}
+
 /* Language Selector */
 .language-selector {
     padding: 8px 12px;

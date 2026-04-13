@@ -293,6 +293,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Settings button functionality
+    const settingsBtn = document.getElementById('settingsBtn');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', function() {
+            alert('Coming soon!');
+        });
+    }
+
     // Theme toggle functionality
     const themeToggle = document.getElementById('themeToggle');
     const lightIcon = themeToggle.querySelector('.light-icon');
