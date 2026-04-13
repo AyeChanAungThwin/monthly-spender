@@ -11,7 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
         'ja': Japan,
         'vi': Vietnam,
         'km': Cambodia,
-        'fil': Philippines
+        'fil': Philippines,
+        'lo': Laos,
+        'bn': Bangladesh,
+        'ko': Korea
     };
 
     // Apply language on load
