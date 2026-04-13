@@ -7,30 +7,32 @@
     <link rel="stylesheet" href="style.css">
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="English.js"></script>
+    <script defer src="Myanmar.js"></script>
     <script defer src="index.js"></script>
 </head>
 <body>
     <div class="container">
         <nav class="sidebar">
             <div class="logo">
-                <h1>Monthly Spender</h1>
+                <h1 data-i18n="title">Monthly Spender</h1>
             </div>
             <ul class="menu">
                 <li class="menu-item active" data-menu="income-expense">
                     <img src="images/spending.png" alt="Income/Expense icon">
-                    <span>Income/Expense</span>
+                    <span data-i18n="menu.incomeExpense">Income/Expense</span>
                 </li>
                 <li class="menu-item" data-menu="transaction">
                     <img src="images/transaction.png" alt="Transaction icon">
-                    <span>Transaction</span>
+                    <span data-i18n="menu.transaction">Transaction</span>
                 </li>
                 <li class="menu-item" data-menu="categories">
                     <img src="images/categories.png" alt="Categories icon">
-                    <span>Categories</span>
+                    <span data-i18n="menu.categories">Categories</span>
                 </li>
                 <li class="menu-item" data-menu="wallets">
                     <img src="images/wallet.png" alt="Wallets icon">
-                    <span>Wallets</span>
+                    <span data-i18n="menu.wallets">Wallets</span>
                 </li>
                 <!-- <li class="menu-item" data-menu="settings">
                     <img src="images/settings.png" alt="Settings icon">
@@ -53,6 +55,10 @@
                     </div>
                 </div>
                 <div class="title-bar-right">
+                    <select id="languageSelector" class="language-selector">
+                        <option value="en">English</option>
+                        <option value="my">Myanmar</option>
+                    </select>
                     <button class="theme-toggle" id="themeToggle" title="Toggle dark/light mode">
                         <img src="images/light.png" alt="Light mode" class="light-icon">
                         <img src="images/dark.png" alt="Dark mode" class="dark-icon">
@@ -60,15 +66,15 @@
                 </div>
             </header>
             <section id="income-expense" class="content-section active">
-                <h2>Income/Expense</h2>
+                <h2 data-i18n="incomeExpense.title">Income/Expense</h2>
                 <div class="income-expense-buttons">
                     <button class="income-btn" id="incomeBtn">
                         <img src="images/income.png" alt="Income">
-                        <span>Income</span>
+                        <span data-i18n="incomeExpense.income">Income</span>
                     </button>
                     <button class="expense-btn" id="expenseBtn">
                         <img src="images/expense.png" alt="Expense">
-                        <span>Expense</span>
+                        <span data-i18n="incomeExpense.expense">Expense</span>
                     </button>
                 </div>
 
@@ -81,7 +87,7 @@
                                 <img src="images/total-income.png" alt="Total Income">
                             </div>
                             <div class="card-info">
-                                <div class="card-label">Total Income</div>
+                                <div class="card-label" data-i18n="summary.totalIncome">Total Income</div>
                                 <div class="card-amount" id="totalIncome" data-currency-placeholder="0.00">$0.00</div>
                             </div>
                         </div>
@@ -90,7 +96,7 @@
                                 <img src="images/balance.png" alt="Balance">
                             </div>
                             <div class="card-info">
-                                <div class="card-label">Balance</div>
+                                <div class="card-label" data-i18n="summary.balance">Balance</div>
                                 <div class="card-amount" id="balance" data-currency-placeholder="0.00">$0.00</div>
                             </div>
                         </div>
@@ -99,7 +105,7 @@
                                 <img src="images/expense.png" alt="Expense">
                             </div>
                             <div class="card-info">
-                                <div class="card-label">Total Expense</div>
+                                <div class="card-label" data-i18n="summary.totalExpense">Total Expense</div>
                                 <div class="card-amount" id="totalExpense" data-currency-placeholder="0.00">$0.00</div>
                             </div>
                         </div>
@@ -108,11 +114,11 @@
                     <!-- Monthly Stats -->
                     <div class="monthly-stats">
                         <div class="stat-card">
-                            <div class="stat-label">Average Monthly Expense</div>
+                            <div class="stat-label" data-i18n="summary.avgMonthlyExpense">Average Monthly Expense</div>
                             <div class="stat-value" id="avgMonthlyExpense" data-currency-placeholder="0.00">$0.00</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">Average Remaining Usage/Day</div>
+                            <div class="stat-label" data-i18n="summary.avgRemainingPerDay">Average Remaining Usage/Day</div>
                             <div class="stat-value" id="avgRemainingThisMonth" data-currency-placeholder="0.00">$0.00</div>
                         </div>
                     </div>
@@ -120,7 +126,7 @@
                     <!-- Charts Section -->
                     <div class="charts-container">
                         <div class="chart-card">
-                            <h3>Expenses by Category</h3>
+                            <h3 data-i18n="summary.expensesByCategory">Expenses by Category</h3>
                             <div class="chart-wrapper">
                                 <canvas id="categoryChart"></canvas>
                             </div>
@@ -129,24 +135,24 @@
                 </div>
             </section>
             <section id="transaction" class="content-section">
-                <h2>Transactions</h2>
+                <h2 data-i18n="transaction.title">Transactions</h2>
                 <div class="transactions-content">
                     <div class="transactions-header">
                         <button class="clear-btn" id="clearTransactionsBtn">
                             <img src="images/clear.png" alt="Clear">
-                            <span>Clear All</span>
+                            <span data-i18n="transaction.clearAll">Clear All</span>
                         </button>
                         <button class="download-btn" id="downloadExcelBtn">
                             <img src="images/excel.png" alt="Download">
-                            <span>Download Excel</span>
+                            <span data-i18n="transaction.downloadExcel">Download Excel</span>
                         </button>
                     </div>
 
                     <!-- Empty State (shown when no transactions) -->
                     <div class="transactions-empty-state" id="transactionsEmptyState">
                         <img src="images/transaction.png" alt="No transactions" class="empty-state-icon">
-                        <p>No transactions yet.</p>
-                        <span class="empty-state-hint">Start by adding income or expense from the Income/Expense page.</span>
+                        <p data-i18n="transaction.noTransactions">No transactions yet.</p>
+                        <span class="empty-state-hint" data-i18n="transaction.noTransactionsHint">Start by adding income or expense from the Income/Expense page.</span>
                     </div>
 
                     <!-- Transactions Table (hidden when no transactions) -->
@@ -154,12 +160,12 @@
                         <table class="transactions-table" id="transactionsTable">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Wallet</th>
-                                    <th>Description</th>
-                                    <th>Amount</th>
-                                    <th>Actions</th>
+                                    <th data-i18n="transaction.date">Date</th>
+                                    <th data-i18n="transaction.type">Type</th>
+                                    <th data-i18n="transaction.wallet">Wallet</th>
+                                    <th data-i18n="transaction.description">Description</th>
+                                    <th data-i18n="transaction.amount">Amount</th>
+                                    <th data-i18n="transaction.actions">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="transactionsTableBody">
@@ -169,23 +175,23 @@
                 </div>
             </section>
             <section id="categories" class="content-section">
-                <h2>Categories</h2>
-                <p class="section-hint">Items used in transactions are greyed out and cannot be edited or deleted.</p>
+                <h2 data-i18n="categories.title">Categories</h2>
+                <p class="section-hint" data-i18n="categories.hint">Items used in transactions are greyed out and cannot be edited or deleted.</p>
                 <div class="categories-content">
                     <button class="add-category-btn" id="addCategoryBtn">
                         <span class="plus-icon">+</span>
-                        <span class="btn-text">Add New Category</span>
+                        <span class="btn-text" data-i18n="categories.addNew">Add New Category</span>
                     </button>
                     <div class="categories-list" id="categoriesList"></div>
                 </div>
             </section>
             <section id="wallets" class="content-section">
-                <h2>Wallets</h2>
-                <p class="section-hint">Wallets used in transactions can only have their amount edited and cannot be deleted.</p>
+                <h2 data-i18n="wallets.title">Wallets</h2>
+                <p class="section-hint" data-i18n="wallets.hint">Wallets used in transactions can only have their amount edited and cannot be deleted.</p>
                 <div class="wallets-content">
                     <button class="add-wallet-btn" id="addWalletBtn">
                         <span class="plus-icon">+</span>
-                        <span class="btn-text">Add New Wallet</span>
+                        <span class="btn-text" data-i18n="wallets.addNew">Add New Wallet</span>
                     </button>
                     <div class="wallets-list" id="walletsList"></div>
                 </div>
@@ -195,22 +201,22 @@
             <div class="modal-overlay" id="categoryModal">
                 <div class="modal-content">
                     <button class="modal-close" id="categoryModalClose">&times;</button>
-                    <h3>Add New Category</h3>
+                    <h3 data-i18n="modals.addCategory">Add New Category</h3>
                     <form id="addCategoryForm">
                         <div class="form-group">
-                            <label for="categoryName">Name</label>
-                            <input type="text" id="categoryName" placeholder="Enter category name" required>
+                            <label for="categoryName" data-i18n="modals.name">Name</label>
+                            <input type="text" id="categoryName" data-i18n-placeholder="modals.categoryName" placeholder="Enter category name" required>
                         </div>
                         <div class="form-group">
-                            <label>Icon</label>
+                            <label data-i18n="modals.icon">Icon</label>
                             <div class="icon-selection" id="categoryIconSelection">
                                 <!-- Icons will be loaded dynamically from images/categories/ -->
                             </div>
                             <input type="hidden" id="selectedCategoryIcon" required>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="btn-cancel" id="categoryBtnCancel">Cancel</button>
-                            <button type="submit" class="btn-submit">Submit</button>
+                            <button type="button" class="btn-cancel" id="categoryBtnCancel" data-i18n="modals.cancel">Cancel</button>
+                            <button type="submit" class="btn-submit" data-i18n="modals.submit">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -220,26 +226,26 @@
             <div class="modal-overlay" id="walletModal">
                 <div class="modal-content">
                     <button class="modal-close" id="modalClose">&times;</button>
-                    <h3>Add New Wallet</h3>
+                    <h3 data-i18n="modals.addWallet">Add New Wallet</h3>
                     <form id="addWalletForm">
                         <div class="form-group">
-                            <label for="walletName">Name</label>
-                            <input type="text" id="walletName" placeholder="Enter wallet name" required>
+                            <label for="walletName" data-i18n="modals.name">Name</label>
+                            <input type="text" id="walletName" data-i18n-placeholder="modals.walletName" placeholder="Enter wallet name" required>
                         </div>
                         <div class="form-group">
-                            <label>Icon</label>
+                            <label data-i18n="modals.icon">Icon</label>
                             <div class="icon-selection" id="iconSelection">
                                 <!-- Icons will be loaded dynamically from images/wallets/ -->
                             </div>
                             <input type="hidden" id="selectedIcon" required>
                         </div>
                         <div class="form-group">
-                            <label for="walletAmount">Amount</label>
+                            <label for="walletAmount" data-i18n="modals.amount">Amount</label>
                             <input type="number" id="walletAmount" placeholder="0.00" step="0.01" min="0" required>
                         </div>
                         <div class="form-actions">
-                            <button type="button" class="btn-cancel" id="btnCancel">Cancel</button>
-                            <button type="submit" class="btn-submit">Submit</button>
+                            <button type="button" class="btn-cancel" id="btnCancel" data-i18n="modals.cancel">Cancel</button>
+                            <button type="submit" class="btn-submit" data-i18n="modals.submit">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -249,46 +255,46 @@
             <div class="modal-overlay" id="incomeExpenseModal">
                 <div class="modal-content">
                     <button class="modal-close" id="incomeExpenseModalClose">&times;</button>
-                    <h3 id="incomeExpenseModalTitle">Add Income</h3>
+                    <h3 id="incomeExpenseModalTitle" data-i18n="modals.addIncome">Add Income</h3>
                     <form id="incomeExpenseForm">
                         <div class="form-group">
-                            <label for="incomeExpenseWallet">Select Wallet</label>
+                            <label for="incomeExpenseWallet" data-i18n="modals.selectWallet">Select Wallet</label>
                             <select id="incomeExpenseWallet" required>
-                                <option value="">Choose a wallet...</option>
+                                <option value="" data-i18n="incomeExpense.chooseWallet">Choose a wallet...</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="incomeExpenseAmount">Amount</label>
+                            <label for="incomeExpenseAmount" data-i18n="modals.amount">Amount</label>
                             <input type="number" id="incomeExpenseAmount" placeholder="0.00" step="0.01" min="0.01" required>
                         </div>
                         <div class="form-group">
-                            <label>Additional Info (optional)</label>
+                            <label data-i18n="incomeExpense.additionalInfo">Additional Info (optional)</label>
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="infoType" value="category" checked>
-                                    <span>Category</span>
+                                    <span data-i18n="incomeExpense.category">Category</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="infoType" value="description">
-                                    <span>Description</span>
+                                    <span data-i18n="incomeExpense.description">Description</span>
                                 </label>
                             </div>
                         </div>
                         <div class="form-group" id="categorySelectorGroup">
-                            <label for="incomeExpenseCategory">Select Category</label>
+                            <label for="incomeExpenseCategory" data-i18n="incomeExpense.selectCategory">Select Category</label>
                             <div class="icon-selection" id="incomeExpenseCategorySelection">
                                 <!-- Icons will be loaded dynamically from images/categories/ -->
                             </div>
                             <input type="hidden" id="incomeExpenseCategory">
                         </div>
                         <div class="form-group" id="descriptionGroup" style="display: none;">
-                            <label for="incomeExpenseDescription">Description</label>
-                            <input type="text" id="incomeExpenseDescription" placeholder="Enter description">
+                            <label for="incomeExpenseDescription" data-i18n="incomeExpense.enterDescription">Description</label>
+                            <input type="text" id="incomeExpenseDescription" data-i18n-placeholder="incomeExpense.enterDescription" placeholder="Enter description">
                         </div>
                         <input type="hidden" id="incomeExpenseType">
                         <div class="form-actions">
-                            <button type="button" class="btn-cancel" id="incomeExpenseBtnCancel">Cancel</button>
-                            <button type="submit" class="btn-submit">Submit</button>
+                            <button type="button" class="btn-cancel" id="incomeExpenseBtnCancel" data-i18n="incomeExpense.cancel">Cancel</button>
+                            <button type="submit" class="btn-submit" data-i18n="incomeExpense.submit">Submit</button>
                         </div>
                     </form>
                 </div>
@@ -298,23 +304,23 @@
             <div class="modal-overlay" id="editTransactionModal">
                 <div class="modal-content">
                     <button class="modal-close" id="editTransactionModalClose">&times;</button>
-                    <h3>Edit Transaction</h3>
-                    <p class="edit-transaction-hint">Changing the amount will automatically adjust the wallet balance.</p>
+                    <h3 data-i18n="editTransaction.title">Edit Transaction</h3>
+                    <p class="edit-transaction-hint" data-i18n="editTransaction.hint">Changing the amount will automatically adjust the wallet balance.</p>
                     <form id="editTransactionForm">
                         <div class="form-group">
-                            <label>Transaction Type</label>
+                            <label data-i18n="editTransaction.type">Transaction Type</label>
                             <p id="editTransactionTypeDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px; font-weight: 500;"></p>
                         </div>
                         <div class="form-group">
-                            <label>Wallet</label>
+                            <label data-i18n="editTransaction.wallet">Wallet</label>
                             <p id="editTransactionWalletDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px;"></p>
                         </div>
                         <div class="form-group">
-                            <label for="editTransactionAmount">Amount</label>
+                            <label for="editTransactionAmount" data-i18n="editTransaction.amount">Amount</label>
                             <input type="number" id="editTransactionAmount" placeholder="0.00" step="0.01" min="0.01" required>
                         </div>
                         <div class="form-group">
-                            <label>Description/Category</label>
+                            <label data-i18n="editTransaction.descriptionCategory">Description/Category</label>
                             <p id="editTransactionDescriptionDisplay" style="padding: 10px; background: #f5f5f5; border-radius: 4px;"></p>
                         </div>
                         <input type="hidden" id="originalTransactionAmount">
@@ -322,8 +328,8 @@
                         <input type="hidden" id="editTransactionType">
                         <input type="hidden" id="editTransactionId">
                         <div class="form-actions">
-                            <button type="button" class="btn-cancel" id="editTransactionBtnCancel">Cancel</button>
-                            <button type="submit" class="btn-submit">Save Changes</button>
+                            <button type="button" class="btn-cancel" id="editTransactionBtnCancel" data-i18n="editTransaction.cancel">Cancel</button>
+                            <button type="submit" class="btn-submit" data-i18n="editTransaction.saveChanges">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -333,34 +339,34 @@
             <div class="modal-overlay" id="deleteTransactionModal">
                 <div class="modal-content">
                     <button class="modal-close" id="deleteTransactionModalClose">&times;</button>
-                    <h3>Delete Transaction</h3>
+                    <h3 data-i18n="deleteTransaction.title">Delete Transaction</h3>
                     <div class="delete-transaction-content">
-                        <p>Are you sure you want to delete this transaction?</p>
+                        <p data-i18n="deleteTransaction.confirm">Are you sure you want to delete this transaction?</p>
                         <div class="transaction-details">
-                            <p><strong>Type:</strong> <span id="deleteTransactionType"></span></p>
-                            <p><strong>Wallet:</strong> <span id="deleteTransactionWallet"></span></p>
-                            <p><strong>Amount:</strong> <span id="deleteTransactionAmount"></span></p>
+                            <p><strong data-i18n="deleteTransaction.type">Type:</strong> <span id="deleteTransactionType"></span></p>
+                            <p><strong data-i18n="deleteTransaction.wallet">Wallet:</strong> <span id="deleteTransactionWallet"></span></p>
+                            <p><strong data-i18n="deleteTransaction.amount">Amount:</strong> <span id="deleteTransactionAmount"></span></p>
                         </div>
                         <div class="form-group" style="margin-top: 20px;">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="updateWalletCheckbox">
-                                <span>Update wallet balance (reverse the transaction effect)</span>
+                                <span data-i18n="deleteTransaction.updateWallet">Update wallet balance (reverse the transaction effect)</span>
                             </label>
                             <p class="hint-text" id="updateWalletHint" style="display: none; margin-top: 10px; font-size: 0.9em; color: #888;"></p>
                         </div>
                         <div class="form-actions" style="margin-top: 20px;">
-                            <button type="button" class="btn-cancel" id="deleteTransactionCancel">Cancel</button>
-                            <button type="button" class="btn-submit" id="deleteTransactionConfirm">Delete</button>
+                            <button type="button" class="btn-cancel" id="deleteTransactionCancel" data-i18n="deleteTransaction.cancel">Cancel</button>
+                            <button type="button" class="btn-submit" id="deleteTransactionConfirm" data-i18n="deleteTransaction.delete">Delete</button>
                         </div>
                     </div>
                 </div>
             </div>
             <section id="settings" class="content-section">
-                <h2>Settings</h2>
+                <h2 data-i18n="settings.title">Settings</h2>
                 <div class="settings-content">
                     <button class="google-signin-btn" id="googleSigninBtn">
                         <img src="images/login.png" alt="Login">
-                        <span class="hint-text">Sign in to Google account to save your data</span>
+                        <span class="hint-text" data-i18n="settings.signin">Sign in to Google account to save your data</span>
                     </button>
                 </div>
             </section>

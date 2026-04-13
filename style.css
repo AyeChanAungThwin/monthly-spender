@@ -107,6 +107,29 @@ body {
 .title-bar-right {
     display: flex;
     align-items: center;
+    gap: 10px;
+}
+
+/* Language Selector */
+.language-selector {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.language-selector:hover {
+    border-color: #aaa;
+    background-color: #f8f9fa;
+}
+
+.language-selector:focus {
+    outline: none;
+    border-color: #4a90d9;
+    box-shadow: 0 0 0 2px rgba(74, 144, 217, 0.2);
 }
 
 .date-info, .time-info, .location-info {
