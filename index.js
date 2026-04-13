@@ -69,6 +69,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Translate title attributes
+        document.querySelectorAll('[data-i18n-title]').forEach(function(el) {
+            const key = el.getAttribute('data-i18n-title');
+            const value = getNestedValue(translations, key);
+            if (value) {
+                el.title = value;
+            }
+        });
+
         // Update html lang attribute
         document.documentElement.lang = lang;
     }
@@ -1400,7 +1409,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Validation
         if (!newAmount || newAmount <= 0) {
-            alert('Please enter a valid amount greater than 0');
+            const translations = currentLanguage === 'my' ? Myanmar : English;
+            const enterValidAmountMsg = getNestedValue(translations, 'validation.enterValidAmountGreater') || 'Please enter a valid amount greater than 0';
+            alert(enterValidAmountMsg);
             return;
         }
 
@@ -1409,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (walletIndex === -1) {
             const translations = currentLanguage === 'my' ? Myanmar : English;
-            const walletNotFoundMsg = getNestedValue(translations, 'validation.walletNotFound') || 'Wallet not found';
+            const walletNotFoundMsg = getNestedValue(translations, 'validation.walletNotFound') || 'Selected wallet not found';
             alert(walletNotFoundMsg);
             return;
         }
