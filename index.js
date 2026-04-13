@@ -1723,8 +1723,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         return dateB - dateA;
                     });
 
-                    // Save merged transactions
+                    // Save merged transactions to localStorage AND update global variable
                     localStorage.setItem('transactions', JSON.stringify(mergedTransactions));
+                    transactions = mergedTransactions;
 
                     // Re-render
                     renderTransactions();
