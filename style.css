@@ -1215,7 +1215,7 @@ body.dark-mode .category-delete-btn:hover {
 
 .transactions-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -1223,39 +1223,55 @@ body.dark-mode .category-delete-btn:hover {
 .upload-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    background-color: #ff9800;
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.9rem;
-    font-weight: 500;
+    justify-content: center;
+    width: 200px;
+    height: 200px;
+    min-width: 200px;
+    min-height: 200px;
+    border-radius: 50%;
+    border: 3px dashed #ccc;
+    background-color: #fafafa;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
 }
 
 .upload-btn:hover {
-    background-color: #f57c00;
-    transform: translateY(-1px);
+    border-color: #4285f4;
+    background-color: #f0f7ff;
+    transform: scale(1.05);
 }
 
-.upload-btn img {
-    width: 20px;
-    height: 20px;
-    object-fit: contain;
+.upload-btn .plus-icon {
+    font-size: 3rem;
+    color: #4285f4;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.upload-btn .btn-text {
+    font-size: 0.9rem;
+    color: #666;
 }
 
 body.dark-mode .upload-btn {
-    background-color: #ff9800;
+    background-color: #2a2a2a;
+    border-color: #444;
 }
 
 body.dark-mode .upload-btn:hover {
-    background-color: #f57c00;
+    border-color: #4285f4;
+    background-color: #1a3a5c;
 }
 
-body.dark-mode .upload-btn img {
-    filter: brightness(0) invert(1);
+body.dark-mode .upload-btn .plus-icon {
+    color: #4285f4;
+}
+
+body.dark-mode .upload-btn .btn-text {
+    color: #aaa;
 }
 
 .clear-btn {
@@ -2097,6 +2113,14 @@ body.dark-mode .chart-card h3 {
         width: 100%;
         justify-content: center;
         padding: 12px;
+    }
+
+    .upload-btn {
+        width: 150px;
+        height: 150px;
+        min-width: 150px;
+        min-height: 150px;
+        align-self: center;
     }
 
     .clear-btn img,
