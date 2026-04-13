@@ -1220,6 +1220,44 @@ body.dark-mode .category-delete-btn:hover {
     margin-bottom: 15px;
 }
 
+.upload-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: #ff9800;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+    background-color: #f57c00;
+    transform: translateY(-1px);
+}
+
+.upload-btn img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+body.dark-mode .upload-btn {
+    background-color: #ff9800;
+}
+
+body.dark-mode .upload-btn:hover {
+    background-color: #f57c00;
+}
+
+body.dark-mode .upload-btn img {
+    filter: brightness(0) invert(1);
+}
+
 .clear-btn {
     display: flex;
     align-items: center;

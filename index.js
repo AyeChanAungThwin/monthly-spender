@@ -1612,9 +1612,140 @@ document.addEventListener('DOMContentLoaded', function() {
         closeDeleteTransactionModal();
     });
 
-    // Excel download and Clear functionality
+    // Excel download, Upload, and Clear functionality
+    const uploadExcelBtn = document.getElementById('uploadExcelBtn');
     const downloadExcelBtn = document.getElementById('downloadExcelBtn');
     const clearTransactionsBtn = document.getElementById('clearTransactionsBtn');
+
+    // Upload Excel functionality
+    uploadExcelBtn.addEventListener('click', function() {
+        const translations = getTranslations();
+
+        // Create hidden file input
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx,.xls';
+
+        input.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(event) {
+                    const data = new Uint8Array(event.target.result);
+                    const workbook = new ExcelJS.Workbook();
+                    await workbook.xlsx.load(data);
+
+                    const worksheet = workbook.getWorksheet(1);
+                    if (!worksheet) {
+                        alert('No worksheet found in the uploaded file.');
+                        return;
+                    }
+
+                    // Read header row to find column indices
+                    const headerRow = worksheet.getRow(1);
+                    const headers = {};
+                    headerRow.eachCell((cell, colNumber) => {
+                        const header = cell.value?.toString().toLowerCase().trim();
+                        if (header) {
+                            headers[header] = colNumber;
+                        }
+                    });
+
+                    // Find column indices
+                    const dateCol = headers['date'] || headers['date/time'] || 1;
+                    const typeCol = headers['type'] || 2;
+                    const walletCol = headers['wallet'] || 3;
+                    const descCol = headers['description'] || 4;
+                    const amountCol = headers['amount'] || 5;
+
+                    const importedTransactions = [];
+                    const now = Date.now();
+
+                    // Read data rows
+                    worksheet.eachRow((row, rowNumber) => {
+                        if (rowNumber === 1) return; // Skip header
+
+                        const dateValue = row.getCell(dateCol).value;
+                        const typeValue = row.getCell(typeCol).value;
+                        const walletValue = row.getCell(walletCol).value;
+                        const descValue = row.getCell(descCol).value;
+                        const amountValue = row.getCell(amountCol).value;
+
+                        if (!dateValue || !typeValue || !walletValue || !amountValue) return;
+
+                        // Parse date
+                        let dateStr;
+                        if (dateValue instanceof Date) {
+                            dateStr = dateValue.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+                        } else {
+                            dateStr = dateValue.toString();
+                        }
+
+                        // Parse type
+                        const typeLower = typeValue.toString().toLowerCase();
+                        const type = typeLower === 'income' ? 'income' : 'expense';
+
+                        // Parse amount
+                        const amount = parseFloat(amountValue);
+                        if (isNaN(amount) || amount <= 0) return;
+
+                        importedTransactions.push({
+                            id: now + rowNumber,
+                            date: dateStr,
+                            type: type,
+                            walletName: walletValue.toString(),
+                            amount: amount.toFixed(2),
+                            description: descValue?.toString() || ''
+                        });
+                    });
+
+                    if (importedTransactions.length === 0) {
+                        alert('No valid transactions found in the uploaded file.');
+                        return;
+                    }
+
+                    // Merge with existing transactions
+                    const existingTransactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                    const mergedTransactions = [...existingTransactions, ...importedTransactions];
+
+                    // Sort by date descending (newest first)
+                    mergedTransactions.sort((a, b) => {
+                        const dateA = new Date(a.date);
+                        const dateB = new Date(b.date);
+                        return dateB - dateA;
+                    });
+
+                    // Save merged transactions
+                    localStorage.setItem('transactions', JSON.stringify(mergedTransactions));
+
+                    // Re-render
+                    renderTransactions();
+                    renderIncomeExpenseSummary();
+                    renderWallets();
+                    renderCategories();
+
+                    const successMsg = `Successfully imported ${importedTransactions.length} transaction(s). Total transactions: ${mergedTransactions.length}`;
+                    alert(successMsg);
+                };
+                reader.readAsArrayBuffer(file);
+            } catch (error) {
+                console.error('Error importing transactions:', error);
+                const translations = getTranslations();
+                const importFailedMsg = translations?.validation?.importFailed || 'Failed to import transactions. Please make sure the file is a valid Excel file with the correct format.';
+                alert(importFailedMsg);
+            }
+        });
+
+        input.click();
+    });
 
     downloadExcelBtn.addEventListener('click', async function() {
         const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
