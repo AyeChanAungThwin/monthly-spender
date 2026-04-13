@@ -1256,9 +1256,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         const sanitizedAmount = sanitizeAmount(amount);
-        if (!sanitizedAmount || sanitizedAmount <= 0) {
+        if (isNaN(sanitizedAmount) || sanitizedAmount < 0) {
             const translations = getTranslations();
-            const enterValidAmountMsg = getNestedValue(translations, 'validation.enterValidAmountGreater') || 'Please enter a valid amount greater than 0';
+            const enterValidAmountMsg = getNestedValue(translations, 'validation.enterValidAmount') || 'Please enter a valid amount';
             alert(enterValidAmountMsg);
             return;
         }
