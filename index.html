@@ -156,18 +156,22 @@
                 <h2 data-i18n="transaction.title">Transactions</h2>
                 <div class="transactions-content">
                     <div class="transactions-header">
-                        <button class="upload-btn" id="uploadExcelBtn">
-                            <img src="images/transaction.png" alt="No transactions" class="empty-state-icon">
-                            <span class="btn-text" data-i18n="transaction.uploadExcel">Upload Excel</span>
-                        </button>
-                        <button class="clear-btn" id="clearTransactionsBtn">
-                            <img src="images/clear.png" alt="Clear">
-                            <span data-i18n="transaction.clearAll">Clear All</span>
-                        </button>
-                        <button class="download-btn" id="downloadExcelBtn">
-                            <img src="images/excel.png" alt="Download">
-                            <span data-i18n="transaction.downloadExcel">Download Excel</span>
-                        </button>
+                        <div class="upload-btn-wrapper">
+                            <button class="upload-btn" id="uploadExcelBtn">
+                                <span class="plus-icon">↑</span>
+                                <span class="btn-text" data-i18n="transaction.uploadExcel">Upload Excel</span>
+                            </button>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="clear-btn" id="clearTransactionsBtn">
+                                <img src="images/clear.png" alt="Clear">
+                                <span data-i18n="transaction.clearAll">Clear All</span>
+                            </button>
+                            <button class="download-btn" id="downloadExcelBtn">
+                                <img src="images/excel.png" alt="Download">
+                                <span data-i18n="transaction.downloadExcel">Download Excel</span>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Empty State (shown when no transactions) -->
