@@ -1400,6 +1400,16 @@ body.dark-mode .download-btn img {
     filter: brightness(0) invert(1);
 }
 
+.download-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+body.dark-mode .download-btn:disabled {
+    background-color: #555;
+}
+
 .transactions-table-container {
     background-color: #fff;
     border-radius: 12px;
