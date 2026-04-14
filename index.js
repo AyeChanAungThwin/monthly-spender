@@ -1783,6 +1783,23 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Disable button and start countdown
+        downloadExcelBtn.disabled = true;
+        let countdown = 5;
+        downloadExcelBtn.textContent = `Download Excel (${countdown}s)`;
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                downloadExcelBtn.textContent = `Download Excel (${countdown}s)`;
+            } else {
+                clearInterval(countdownInterval);
+                downloadExcelBtn.disabled = false;
+                const downloadLabel = getNestedValue(translations, 'transaction.downloadExcel') || 'Download Excel';
+                downloadExcelBtn.textContent = downloadLabel;
+            }
+        }, 1000);
+
         try {
             const workbook = new ExcelJS.Workbook();
             const worksheet = workbook.addWorksheet('Transactions');
