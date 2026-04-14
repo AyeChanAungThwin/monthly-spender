@@ -1816,9 +1816,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
 
-            // Generate file name with current date
+            // Generate file name with current date and time
             const now = new Date();
-            const fileName = `transactions_${now.toISOString().split('T')[0]}.xlsx`;
+            const dateStr = now.toISOString().split('T')[0];
+            const timeStr = now.toTimeString().split(' ')[0].replace(/:/g, '-');
+            const fileName = `transactions_${dateStr}_${timeStr}.xlsx`;
 
             // Download file
             await workbook.xlsx.writeBuffer().then(function(buffer) {
