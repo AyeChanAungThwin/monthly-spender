@@ -560,18 +560,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const walletAmountInput = document.getElementById('walletAmount');
     walletAmountInput.addEventListener('input', function() {
         let value = this.value;
+        const cursorPos = this.selectionStart;
         // Remove any non-numeric characters except decimal point
         value = value.replace(/[^0-9.]/g, '');
         // Allow only one decimal point
-        const parts = value.split('.');
-        if (parts.length > 2) {
-            value = parts[0] + '.' + parts.slice(1).join('');
+        const firstDot = value.indexOf('.');
+        if (firstDot !== -1) {
+            // Remove any additional dots after the first one
+            value = value.substring(0, firstDot + 1) + value.substring(firstDot + 1).replace(/\./g, '');
         }
-        // Limit to 2 decimal places (but don't force formatting)
+        // Limit to 2 decimal places (but don't force formatting while typing)
+        const parts = value.split('.');
         if (parts.length === 2 && parts[1].length > 2) {
             value = parts[0] + '.' + parts[1].substring(0, 2);
         }
-        this.value = value;
+        // Only update if value changed to avoid cursor jump
+        if (this.value !== value) {
+            this.value = value;
+            // Restore cursor position after updating value
+            const newCursorPos = Math.min(cursorPos, value.length);
+            this.setSelectionRange(newCursorPos, newCursorPos);
+        }
     });
 
     // Form submission
@@ -1094,18 +1103,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const incomeExpenseAmountInput = document.getElementById('incomeExpenseAmount');
     incomeExpenseAmountInput.addEventListener('input', function() {
         let value = this.value;
+        const cursorPos = this.selectionStart;
         // Remove any non-numeric characters except decimal point
         value = value.replace(/[^0-9.]/g, '');
         // Allow only one decimal point
-        const parts = value.split('.');
-        if (parts.length > 2) {
-            value = parts[0] + '.' + parts.slice(1).join('');
+        const firstDot = value.indexOf('.');
+        if (firstDot !== -1) {
+            // Remove any additional dots after the first one
+            value = value.substring(0, firstDot + 1) + value.substring(firstDot + 1).replace(/\./g, '');
         }
-        // Limit to 2 decimal places (but don't force formatting)
+        // Limit to 2 decimal places (but don't force formatting while typing)
+        const parts = value.split('.');
         if (parts.length === 2 && parts[1].length > 2) {
             value = parts[0] + '.' + parts[1].substring(0, 2);
         }
         this.value = value;
+        this.setSelectionRange(cursorPos, cursorPos);
     });
 
     // Load category icons for income/expense form
@@ -1403,18 +1416,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const editTransactionAmountInput = document.getElementById('editTransactionAmount');
     editTransactionAmountInput.addEventListener('input', function() {
         let value = this.value;
+        const cursorPos = this.selectionStart;
         // Remove any non-numeric characters except decimal point
         value = value.replace(/[^0-9.]/g, '');
         // Allow only one decimal point
-        const parts = value.split('.');
-        if (parts.length > 2) {
-            value = parts[0] + '.' + parts.slice(1).join('');
+        const firstDot = value.indexOf('.');
+        if (firstDot !== -1) {
+            // Remove any additional dots after the first one
+            value = value.substring(0, firstDot + 1) + value.substring(firstDot + 1).replace(/\./g, '');
         }
-        // Limit to 2 decimal places (but don't force formatting)
+        // Limit to 2 decimal places (but don't force formatting while typing)
+        const parts = value.split('.');
         if (parts.length === 2 && parts[1].length > 2) {
             value = parts[0] + '.' + parts[1].substring(0, 2);
         }
         this.value = value;
+        this.setSelectionRange(cursorPos, cursorPos);
     });
 
     function closeEditTransactionModal() {
